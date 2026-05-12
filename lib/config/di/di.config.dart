@@ -13,16 +13,19 @@ import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
-import '../core/network/apiServices/api_services.dart' as _i247;
-import '../core/network/dio/dio_client.dart' as _i980;
-import '../features/movies/data/datasources/remote/movies_remote_data_source_impl.dart'
+import '../../core/network/apiServices/api_services.dart' as _i247;
+import '../../core/network/dio/dio_client.dart' as _i980;
+import '../../features/movies/data/datasources/remote/movies_remote_data_source_impl.dart'
     as _i801;
-import '../features/movies/data/repositories/movies_repository_impl.dart'
+import '../../features/movies/data/repositories/movies_repository_impl.dart'
     as _i63;
-import '../features/movies/domain/datasource/remote/movies_remote_data_source.dart'
+import '../../features/movies/domain/datasource/remote/movies_remote_data_source.dart'
     as _i134;
-import '../features/movies/domain/repositories/movies_repository.dart' as _i393;
-import '../features/movies/domain/usecases/movie_use_case.dart' as _i609;
+import '../../features/movies/domain/repositories/movies_repository.dart'
+    as _i393;
+import '../../features/movies/domain/usecases/movie_use_case.dart' as _i609;
+import '../../features/movies/presentation/pages/home/cubit/view_model.dart'
+    as _i604;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -47,6 +50,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i609.GetMovieUseCase>(
       () => _i609.GetMovieUseCase(gh<_i393.MoviesRepository>()),
+    );
+    gh.factory<_i604.HomeCubit>(
+      () => _i604.HomeCubit(getMovieUseCase: gh<_i609.GetMovieUseCase>()),
     );
     return this;
   }
