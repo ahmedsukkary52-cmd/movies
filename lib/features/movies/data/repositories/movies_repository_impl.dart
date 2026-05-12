@@ -1,10 +1,12 @@
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 import 'package:moives/core/errors/exceptions.dart';
 import 'package:moives/core/errors/failure.dart';
 import 'package:moives/features/movies/domain/datasource/remote/movies_remote_data_source.dart';
 import 'package:moives/features/movies/domain/entities/response/movie_list/movies_list.dart';
 import 'package:moives/features/movies/domain/repositories/movies_repository.dart';
 
+@Injectable(as: MoviesRepository)
 class MoviesRepositoryImpl implements MoviesRepository {
   MoviesRemoteDataSource remoteDataSource;
 
