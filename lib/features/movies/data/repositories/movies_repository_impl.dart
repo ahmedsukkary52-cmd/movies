@@ -1,0 +1,24 @@
+import 'package:dartz/dartz.dart';
+import 'package:moives/core/errors/exceptions.dart';
+import 'package:moives/core/errors/failure.dart';
+import 'package:moives/features/movies/domain/datasource/remote/movies_remote_data_source.dart';
+import 'package:moives/features/movies/domain/entities/response/movie_list/movies_list.dart';
+import 'package:moives/features/movies/domain/repositories/movies_repository.dart';
+
+class MoviesRepositoryImpl implements MoviesRepository {
+  MoviesRemoteDataSource remoteDataSource;
+
+  MoviesRepositoryImpl({required this.remoteDataSource});
+
+  @override
+  Future<Either<Failure, MoviesList>> getMovies() async {
+    try {
+      var movieListResponse = await remoteDataSource.getMoviesList();
+      return Right(movieListResponse);
+    } on ServerExceptions catch (e) {
+      return Left(ServerFailure(e.message));
+    } on NetworkExceptions catch (e) {
+      return Left(NetworkFailure(e.message));
+    }
+  }
+}
