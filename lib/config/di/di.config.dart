@@ -13,19 +13,20 @@ import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
-import '../../core/network/apiServices/api_services.dart' as _i247;
-import '../../core/network/dio/dio_client.dart' as _i980;
+import '../../core/network/apiServices/api_services.dart' as _i48;
+import '../../core/network/dio/dio_client.dart' as _i765;
+import '../../core/network/dio/dio_module.dart' as _i555;
 import '../../features/movies/data/datasources/remote/movies_remote_data_source_impl.dart'
-    as _i801;
+    as _i587;
 import '../../features/movies/data/repositories/movies_repository_impl.dart'
-    as _i63;
+    as _i985;
 import '../../features/movies/domain/datasource/remote/movies_remote_data_source.dart'
-    as _i134;
+    as _i322;
 import '../../features/movies/domain/repositories/movies_repository.dart'
-    as _i393;
-import '../../features/movies/domain/usecases/movie_use_case.dart' as _i609;
+    as _i435;
+import '../../features/movies/domain/usecases/movie_use_case.dart' as _i207;
 import '../../features/movies/presentation/pages/home/cubit/view_model.dart'
-    as _i604;
+    as _i483;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -34,26 +35,29 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
-    gh.singleton<_i980.DioClient>(() => _i980.DioClient());
-    gh.factory<_i247.ApiServices>(
-      () => _i247.ApiServices(gh<_i361.Dio>(), baseUrl: gh<String>()),
+    final diModule = _$DiModule();
+    gh.singleton<_i765.DioClient>(() => _i765.DioClient());
+    gh.singleton<_i361.Dio>(() => diModule.provideDio(gh<_i765.DioClient>()));
+    gh.singleton<_i48.ApiServices>(
+      () => diModule.provideApiServices(gh<_i361.Dio>()),
     );
-    gh.factory<_i134.MoviesRemoteDataSource>(
-      () => _i801.MoviesRemoteDataSourceImpl(
-        apiServices: gh<_i247.ApiServices>(),
+    gh.factory<_i322.MoviesRemoteDataSource>(
+      () =>
+          _i587.MoviesRemoteDataSourceImpl(apiServices: gh<_i48.ApiServices>()),
+    );
+    gh.factory<_i435.MoviesRepository>(
+      () => _i985.MoviesRepositoryImpl(
+        remoteDataSource: gh<_i322.MoviesRemoteDataSource>(),
       ),
     );
-    gh.factory<_i393.MoviesRepository>(
-      () => _i63.MoviesRepositoryImpl(
-        remoteDataSource: gh<_i134.MoviesRemoteDataSource>(),
-      ),
+    gh.factory<_i207.GetMovieUseCase>(
+      () => _i207.GetMovieUseCase(gh<_i435.MoviesRepository>()),
     );
-    gh.factory<_i609.GetMovieUseCase>(
-      () => _i609.GetMovieUseCase(gh<_i393.MoviesRepository>()),
-    );
-    gh.factory<_i604.HomeCubit>(
-      () => _i604.HomeCubit(getMovieUseCase: gh<_i609.GetMovieUseCase>()),
+    gh.factory<_i483.HomeCubit>(
+      () => _i483.HomeCubit(getMovieUseCase: gh<_i207.GetMovieUseCase>()),
     );
     return this;
   }
 }
+
+class _$DiModule extends _i555.DiModule {}

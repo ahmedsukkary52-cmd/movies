@@ -13,9 +13,9 @@ class MoviesRepositoryImpl implements MoviesRepository {
   MoviesRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<Either<Failure, MoviesList>> getMovies() async {
+  Future<Either<Failure, MoviesList>> getMovies({int page = 1}) async {
     try {
-      var movieListResponse = await remoteDataSource.getMoviesList();
+      var movieListResponse = await remoteDataSource.getMoviesList(page: page);
       return Right(movieListResponse);
     } on ServerExceptions catch (e) {
       return Left(ServerFailure(e.message));

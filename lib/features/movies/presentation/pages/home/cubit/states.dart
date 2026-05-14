@@ -5,9 +5,10 @@ sealed class HomeStates {}
 class HomeLoading extends HomeStates {}
 
 class HomeSuccess extends HomeStates {
-  List<Movie> movie;
+  final List<Movie> movie;
+  final bool isLoadingMore;
 
-  HomeSuccess({required this.movie});
+  HomeSuccess({required this.movie, this.isLoadingMore = false});
 }
 
 class HomeError extends HomeStates {
