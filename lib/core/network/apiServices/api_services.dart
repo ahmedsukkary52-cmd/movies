@@ -8,12 +8,10 @@ import '../../utils/app_endpoint.dart';
 
 part 'api_services.g.dart';
 
-@injectable
 @RestApi(baseUrl: AppConstants.baseUrl)
 abstract class ApiServices {
-  @factoryMethod
   factory ApiServices(Dio dio, {String? baseUrl}) = _ApiServices;
 
   @GET(AppEndpoint.movieList)
-  Future<MoviesListDto> getMoviesList();
+  Future<MoviesListDto> getMoviesList({@Query('page') int page = 1});
 }

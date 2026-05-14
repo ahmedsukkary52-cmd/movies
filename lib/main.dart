@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:moives/config/app_route/app_router.dart';
 import 'package:moives/config/di/di.dart';
+import 'package:moives/config/theme/theme_app.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,6 +23,7 @@ class MoviesApp extends StatelessWidget {
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           routerConfig: AppRouter.router,
+          theme: ThemeApp.themeData,
         );
       },
     );
