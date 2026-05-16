@@ -13,9 +13,10 @@ class MoviesRemoteDataSourceImpl implements MoviesRemoteDataSource {
   MoviesRemoteDataSourceImpl({required this.apiServices});
 
   @override
-  Future<MoviesList> getMoviesList({int page = 1}) async {
+  Future<MoviesList> getMoviesList({int page = 1, String? genre}) async {
     try {
-      var movieListResponse = await apiServices.getMoviesList(page: page);
+      var movieListResponse = await apiServices.getMoviesList(
+          page: page, genre: genre);
       return movieListResponse.toMovieList();
     } on DioException catch (e) {
       String message = (e.error as AppExceptions).message;
