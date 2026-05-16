@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
+import 'package:moives/core/usecases/movie_params.dart';
 import 'package:moives/features/movies/domain/entities/response/movie_list/movie.dart';
 import 'package:moives/features/movies/domain/usecases/movie_use_case.dart';
 import 'package:moives/features/movies/presentation/pages/home/cubit/states.dart';
@@ -12,9 +13,46 @@ class HomeCubit extends Cubit<HomeStates> {
   bool _hasMore = true;
   bool _isLoadingMore = false;
   List<Movie> _movies = [];
+  final List<String> _genres = [
+    'Action',
+    'Comedy',
+    'Horror',
+    'Drama',
+    'Romance',
+  ];
+  Map<String, List<Movie>> _moviesByGenre = {};
+
+  Future<void> getMoviesByGenre() async {
+    final shuffled = List.of(_genres)..shuffle();
+    final selected = shuffled.take(3).toList();
+
+    _moviesByGenre = {};
+
+    emit(
+      HomeSuccess(
+        movie: _movies,
+        moviesByGenre: _moviesByGenre,
+        isLoadingGenre: true,
+      ),
+    );
+
+    for (var genre in selected) {
+      final response = await getMovieUseCase(MovieParams(genre: genre));
+      response.fold((failure) => null, (moviesList) {
+        _moviesByGenre[genre] = moviesList.data?.movies ?? [];
+      });
+    }
+    emit(
+      HomeSuccess(
+        movie: _movies,
+        moviesByGenre: _moviesByGenre,
+        isLoadingGenre: false,
+      ),
+    );
+  }
 
   Future<void> getMoviesList({bool isLoadMore = false}) async {
-    if (_isLoadingMore || !_hasMore) return; // ← منع الـ duplicate calls
+    if (_isLoadingMore || !_hasMore) return;
 
     if (!isLoadMore) {
       emit(HomeLoading());
@@ -22,7 +60,7 @@ class HomeCubit extends Cubit<HomeStates> {
       _isLoadingMore = true;
     }
 
-    final response = await getMovieUseCase(_currentPage);
+    final response = await getMovieUseCase(MovieParams(page: _currentPage));
 
     response.fold((failure) => emit(HomeError(message: failure.message)), (
       moviesList,
@@ -35,7 +73,7 @@ class HomeCubit extends Cubit<HomeStates> {
         _currentPage++;
       }
       _isLoadingMore = false;
-      emit(HomeSuccess(movie: _movies));
+      emit(HomeSuccess(movie: _movies, moviesByGenre: _moviesByGenre));
     });
   }
 }
