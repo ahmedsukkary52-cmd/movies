@@ -5,7 +5,7 @@ import 'package:moives/features/movies/domain/entities/response/movie_list/movie
 import 'package:moives/features/movies/domain/usecases/movie_use_case.dart';
 import 'package:moives/features/movies/presentation/pages/home/cubit/states.dart';
 
-@injectable
+@singleton
 class HomeCubit extends Cubit<HomeStates> {
   HomeCubit({required this.getMovieUseCase}) : super(HomeLoading());
   GetMovieUseCase getMovieUseCase;

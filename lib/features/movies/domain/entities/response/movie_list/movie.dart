@@ -57,3 +57,4 @@ class Movie {
     this.dateUploadedUnix,
   });
 }
+

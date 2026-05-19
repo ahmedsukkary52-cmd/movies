@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:moives/config/app_route/app_routes_name.dart';
 import 'package:moives/config/theme/color_app.dart';
 import 'package:moives/config/theme/path_image.dart';
 import 'package:moives/config/theme/text_app.dart';
@@ -14,34 +16,41 @@ class MovieItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-      alignment: Alignment.topLeft,
-      width: isSmall ? 146.w : 234.w,
-      height: isSmall ? 220.w : 352.w,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20.sp),
-        image: movie.mediumCoverImage != null
-            ? DecorationImage(
-                image: NetworkImage(movie.mediumCoverImage!),
-                fit: BoxFit.cover,
-              )
-            : null,
-        color: ColorApp.grayColor,
-      ),
+    return InkWell(
+      borderRadius: BorderRadius.circular(10.sp),
+      onTap: () {
+        context.goNamed(
+            AppRoutes.details, pathParameters: {'id': '${movie.id}'});
+      },
       child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+        alignment: Alignment.topLeft,
+        width: isSmall ? 146.w : 234.w,
+        height: isSmall ? 220.w : 352.w,
         decoration: BoxDecoration(
-          color: ColorApp.transparentGray,
-          borderRadius: BorderRadius.circular(10.sp),
+          borderRadius: BorderRadius.circular(20.sp),
+          image: movie.mediumCoverImage != null
+              ? DecorationImage(
+            image: NetworkImage(movie.mediumCoverImage!),
+            fit: BoxFit.cover,
+          )
+              : null,
+          color: ColorApp.grayColor,
         ),
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('${movie.rating ?? 0.0}', style: TextApp.regular16White),
-            SizedBox(width: 4.w),
-            SvgPicture.asset(PathImage.star, width: 15.w, height: 15.h),
-          ],
+        child: Container(
+          decoration: BoxDecoration(
+            color: ColorApp.transparentGray,
+            borderRadius: BorderRadius.circular(10.sp),
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('${movie.rating ?? 0.0}', style: TextApp.regular16White),
+              SizedBox(width: 4.w),
+              SvgPicture.asset(PathImage.star, width: 15.w, height: 15.h),
+            ],
+          ),
         ),
       ),
     );

@@ -49,6 +49,42 @@ class _ApiServices implements ApiServices {
     return _value;
   }
 
+  @override
+  Future<MovieDetailsDto> getMoviesDetails({
+    int? movieId,
+    bool withCast = true,
+    bool withImages = true,
+  }) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'movie_id': movieId,
+      r'with_cast': withCast,
+      r'with_images': withImages,
+    };
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    const Map<String, dynamic>? _data = null;
+    final _options = _setStreamType<MovieDetailsDto>(
+      Options(method: 'GET', headers: _headers, extra: _extra)
+          .compose(
+        _dio.options,
+        'movie_details.json',
+        queryParameters: queryParameters,
+        data: _data,
+      )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late MovieDetailsDto _value;
+    try {
+      _value = MovieDetailsDto.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||
