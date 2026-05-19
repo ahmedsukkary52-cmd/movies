@@ -27,6 +27,8 @@ import '../../features/movies/domain/repositories/movies_repository.dart'
 import '../../features/movies/domain/usecases/movie_details_use_case.dart'
     as _i376;
 import '../../features/movies/domain/usecases/movie_use_case.dart' as _i207;
+import '../../features/movies/presentation/pages/bottom_nav/cubit/bottom_nav_cubit.dart'
+    as _i175;
 import '../../features/movies/presentation/pages/home/cubit/view_model.dart'
     as _i483;
 import '../../features/movies/presentation/pages/movie_details/cuibt/details_cubit.dart'
@@ -40,6 +42,7 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final diModule = _$DiModule();
+    gh.factory<_i175.BottomNavCubit>(() => _i175.BottomNavCubit());
     gh.singleton<_i765.DioClient>(() => _i765.DioClient());
     gh.singleton<_i361.Dio>(() => diModule.provideDio(gh<_i765.DioClient>()));
     gh.singleton<_i48.ApiServices>(
