@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:moives/features/movies/data/models/response/movie_list/torrents_dto.dart';
+import 'package:moives/features/movies/data/models/common/torrents_dto.dart';
+
 part 'movies_dto.g.dart';
 
 @JsonSerializable()

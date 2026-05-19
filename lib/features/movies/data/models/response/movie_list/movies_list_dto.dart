@@ -1,5 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:moives/features/movies/data/models/response/movie_list/meta_dto.dart';
+import 'package:moives/features/movies/data/models/common/meta_dto.dart';
 
 import 'movies_data_dto.dart';
 

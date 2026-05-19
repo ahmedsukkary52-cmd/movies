@@ -36,7 +36,8 @@ class _HomePageState extends State<HomePage> {
           if (state is HomeLoading) {
             return Center(child: const CircularProgressIndicator());
           } else if (state is HomeError) {
-            return Center(child: Text(state.message));
+            return Center(child: Text(state.message, style: TextApp.bold24White,
+              textAlign: TextAlign.center,));
           } else if (state is HomeSuccess) {
             return Container(
               decoration: BoxDecoration(

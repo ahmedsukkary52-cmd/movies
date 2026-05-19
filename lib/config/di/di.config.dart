@@ -24,9 +24,13 @@ import '../../features/movies/domain/datasource/remote/movies_remote_data_source
     as _i322;
 import '../../features/movies/domain/repositories/movies_repository.dart'
     as _i435;
+import '../../features/movies/domain/usecases/movie_details_use_case.dart'
+    as _i376;
 import '../../features/movies/domain/usecases/movie_use_case.dart' as _i207;
 import '../../features/movies/presentation/pages/home/cubit/view_model.dart'
     as _i483;
+import '../../features/movies/presentation/pages/movie_details/cuibt/details_cubit.dart'
+    as _i440;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -50,10 +54,16 @@ extension GetItInjectableX on _i174.GetIt {
         remoteDataSource: gh<_i322.MoviesRemoteDataSource>(),
       ),
     );
+    gh.factory<_i376.MovieDetailsUseCase>(
+      () => _i376.MovieDetailsUseCase(repository: gh<_i435.MoviesRepository>()),
+    );
     gh.factory<_i207.GetMovieUseCase>(
       () => _i207.GetMovieUseCase(gh<_i435.MoviesRepository>()),
     );
-    gh.factory<_i483.HomeCubit>(
+    gh.factory<_i440.DetailsCubit>(
+      () => _i440.DetailsCubit(useCase: gh<_i376.MovieDetailsUseCase>()),
+    );
+    gh.singleton<_i483.HomeCubit>(
       () => _i483.HomeCubit(getMovieUseCase: gh<_i207.GetMovieUseCase>()),
     );
     return this;
