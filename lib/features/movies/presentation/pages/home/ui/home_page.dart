@@ -5,9 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:moives/config/di/di.dart';
 import 'package:moives/config/theme/path_image.dart';
 import 'package:moives/config/theme/text_app.dart';
+import 'package:moives/core/utils/widgets/movie_item.dart';
 import 'package:moives/features/movies/presentation/pages/home/cubit/states.dart';
 import 'package:moives/features/movies/presentation/pages/home/cubit/view_model.dart';
-import 'package:moives/features/movies/presentation/pages/home/widget/movie_item.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -21,10 +21,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    cubit.getMoviesList();
-    cubit.getMoviesByGenre();
+    init();
+  }
+
+  Future<void> init() async {
+    await cubit.getMoviesList();
+    await cubit.getMoviesByGenre();
   }
 
   @override
@@ -34,11 +37,13 @@ class _HomePageState extends State<HomePage> {
         bloc: cubit,
         builder: (context, state) {
           if (state is HomeLoading) {
-            return Center(child: const CircularProgressIndicator());
-          } else if (state is HomeError) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state is HomeError) {
             return Center(child: Text(state.message, style: TextApp.bold24White,
               textAlign: TextAlign.center,));
-          } else if (state is HomeSuccess) {
+          }
+          if (state is HomeSuccess) {
             return Container(
               decoration: BoxDecoration(
                 image: DecorationImage(

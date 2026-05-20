@@ -19,7 +19,7 @@ class MovieItem extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(10.sp),
       onTap: () {
-        context.goNamed(
+        context.pushNamed(
             AppRoutes.details, pathParameters: {'id': '${movie.id}'});
       },
       child: Container(
