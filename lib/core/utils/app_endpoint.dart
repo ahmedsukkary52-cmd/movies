@@ -7,4 +7,5 @@ class AppEndpoint {
   static const String suggestions = 'movie_suggestions.json';
   static const String withImage = 'with_images';
   static const String withCast = 'with_cast';
+  static const String search = 'query_term';
 }

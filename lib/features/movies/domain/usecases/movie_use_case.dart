@@ -12,6 +12,7 @@ class GetMovieUseCase extends BaseUseCase<MoviesList, MovieParams> {
   GetMovieUseCase(this.repository);
   @override
   Future<Either<Failure, MoviesList>> call(MovieParams params) {
-    return repository.getMovies(page: params.page, genre: params.genre);
+    return repository.getMovies(
+        page: params.page, genre: params.genre, query: params.query);
   }
 }

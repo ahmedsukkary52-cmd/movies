@@ -49,12 +49,18 @@ class CastItem extends StatelessWidget {
           Expanded(
             flex: 3,
             child: Column(
+              spacing: 8.h,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Name : $castName', style: TextApp.regular20White),
-                Text(
-                  'Character : $castCharacter',
-                  style: TextApp.regular20White,
+                SizedBox(child: Text(
+                    'Name : $castName', style: TextApp.regular20White,
+                    overflow: TextOverflow.ellipsis)),
+                SizedBox(
+                  child: Text(
+                    'Character : $castCharacter',
+                    style: TextApp.regular20White,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),

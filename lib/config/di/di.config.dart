@@ -26,6 +26,8 @@ import '../../features/movies/domain/repositories/movies_repository.dart'
     as _i435;
 import '../../features/movies/domain/usecases/movie_details_use_case.dart'
     as _i376;
+import '../../features/movies/domain/usecases/movie_suggestions_use_case.dart'
+    as _i626;
 import '../../features/movies/domain/usecases/movie_use_case.dart' as _i207;
 import '../../features/movies/presentation/pages/bottom_nav/cubit/bottom_nav_cubit.dart'
     as _i175;
@@ -33,6 +35,8 @@ import '../../features/movies/presentation/pages/home/cubit/view_model.dart'
     as _i483;
 import '../../features/movies/presentation/pages/movie_details/cuibt/details_cubit.dart'
     as _i440;
+import '../../features/movies/presentation/pages/search/cubit/search_cubit.dart'
+    as _i999;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -60,11 +64,22 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i376.MovieDetailsUseCase>(
       () => _i376.MovieDetailsUseCase(repository: gh<_i435.MoviesRepository>()),
     );
+    gh.factory<_i626.MovieSuggestionsUseCase>(
+      () => _i626.MovieSuggestionsUseCase(
+        repository: gh<_i435.MoviesRepository>(),
+      ),
+    );
     gh.factory<_i207.GetMovieUseCase>(
       () => _i207.GetMovieUseCase(gh<_i435.MoviesRepository>()),
     );
     gh.factory<_i440.DetailsCubit>(
-      () => _i440.DetailsCubit(useCase: gh<_i376.MovieDetailsUseCase>()),
+      () => _i440.DetailsCubit(
+        useCase: gh<_i376.MovieDetailsUseCase>(),
+        suggestionsUseCase: gh<_i626.MovieSuggestionsUseCase>(),
+      ),
+    );
+    gh.factory<_i999.SearchCubit>(
+      () => _i999.SearchCubit(useCase: gh<_i207.GetMovieUseCase>()),
     );
     gh.singleton<_i483.HomeCubit>(
       () => _i483.HomeCubit(getMovieUseCase: gh<_i207.GetMovieUseCase>()),
