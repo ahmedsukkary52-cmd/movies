@@ -92,13 +92,10 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                     background: Stack(
                       fit: StackFit.expand,
                       children: [
-                        /// الصورة
                         Image.network(
                           movie?.largeCoverImage ?? '',
                           fit: BoxFit.cover,
                         ),
-
-                        /// الجريدينت
                         Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -112,8 +109,6 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                             ),
                           ),
                         ),
-
-                        /// الكلام
                         Padding(
                           padding: EdgeInsets.only(
                             left: 20.w,
