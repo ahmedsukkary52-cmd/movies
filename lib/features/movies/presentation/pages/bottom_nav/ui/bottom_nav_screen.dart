@@ -5,7 +5,7 @@ import 'package:moives/features/movies/presentation/pages/bottom_nav/cubit/botto
 import 'package:moives/features/movies/presentation/pages/home/ui/home_page.dart';
 import 'package:moives/features/movies/presentation/pages/profile/ui/profile_page.dart';
 
-import '../../brows/ui/brows_page.dart';
+import '../../browse/ui/browse_page.dart';
 import '../../search/ui/search_page.dart';
 import '../widget/custom_bottom_nav.dart';
 
@@ -15,7 +15,7 @@ class MainScreenBottomNav extends StatelessWidget {
   final List<Widget> screens = [
     HomePage(),
     SearchPage(),
-    BrowsPage(),
+    BrowsePage(),
     ProfilePage(),
   ];
 
@@ -24,6 +24,7 @@ class MainScreenBottomNav extends StatelessWidget {
     return BlocBuilder<BottomNavCubit, BottomNavStates>(
       builder: (context, state) {
         return Scaffold(
+          resizeToAvoidBottomInset: false,
           body: Stack(
             children: [
               Positioned.fill(

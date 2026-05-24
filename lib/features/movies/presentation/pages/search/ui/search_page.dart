@@ -40,11 +40,14 @@ class _SearchPageState extends State<SearchPage> {
 
           if (state is SearchLoading) {
             return Center(child: CircularProgressIndicator());
-          } else if (state is SearchError) {
+          }
+          if (state is SearchError) {
             return Center(child: Text(state.message));
-          } else if (state is SearchLoadingMore || state is SearchSuccess) {
+          }
+          if (state is SearchLoadingMore || state is SearchSuccess) {
             return SafeArea(child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 22.h),
+              padding: EdgeInsets.only(
+                  right: 16.w, left: 16.w, top: 20.h, bottom: 40.h),
               child: Column(
                 children: [
                   CustomTextField(
@@ -62,7 +65,7 @@ class _SearchPageState extends State<SearchPage> {
                     child: Stack(
                       children: [
                         GridView.builder(
-                          padding: EdgeInsets.only(top: 70.h),
+                          padding: EdgeInsets.only(top: 30.h, bottom: 130.h),
                           gridDelegate:
                           SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
@@ -85,7 +88,7 @@ class _SearchPageState extends State<SearchPage> {
                               sigmaY: 15,
                             ),
                             child: Container(
-                              height: 60.h,
+                              height: 20.h,
                               color: ColorApp.black.withOpacity(.9),
                             ),
                           ),

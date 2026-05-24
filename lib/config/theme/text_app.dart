@@ -92,6 +92,6 @@ class TextApp {
   static final TextStyle bold20Black = GoogleFonts.roboto(
     fontSize: 20,
     fontWeight: FontWeight.bold,
-    color: ColorApp.primary,
+    color: ColorApp.black,
   );
 }

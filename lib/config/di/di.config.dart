@@ -31,6 +31,8 @@ import '../../features/movies/domain/usecases/movie_suggestions_use_case.dart'
 import '../../features/movies/domain/usecases/movie_use_case.dart' as _i207;
 import '../../features/movies/presentation/pages/bottom_nav/cubit/bottom_nav_cubit.dart'
     as _i175;
+import '../../features/movies/presentation/pages/browse/cubit/browse_cubit.dart'
+    as _i981;
 import '../../features/movies/presentation/pages/home/cubit/view_model.dart'
     as _i483;
 import '../../features/movies/presentation/pages/movie_details/cuibt/details_cubit.dart'
@@ -77,6 +79,9 @@ extension GetItInjectableX on _i174.GetIt {
         useCase: gh<_i376.MovieDetailsUseCase>(),
         suggestionsUseCase: gh<_i626.MovieSuggestionsUseCase>(),
       ),
+    );
+    gh.singleton<_i981.BrowseCubit>(
+      () => _i981.BrowseCubit(useCase: gh<_i207.GetMovieUseCase>()),
     );
     gh.factory<_i999.SearchCubit>(
       () => _i999.SearchCubit(useCase: gh<_i207.GetMovieUseCase>()),
