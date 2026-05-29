@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../config/theme/color_app.dart';
 import '../../../config/theme/path_image.dart';
@@ -36,7 +37,7 @@ class CustomElevatedButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: height ?? 55.h,
+      height: height ?? 58.h,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: hasBorder ? ColorApp.transparent : background,
@@ -49,21 +50,17 @@ class CustomElevatedButton extends StatelessWidget {
           ),
         ),
         onPressed: onPressed,
-        child: hasIcon == true
+        child: hasIcon
             ? customWidgetWithIcon ??
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      ImageIcon(
-                        AssetImage(iconImage ?? PathImage.google),
-                        color: iconColor ?? ColorApp.black,
-                        size: 22,
-                      ),
+                      SvgPicture.asset(PathImage.google),
                       SizedBox(width: 12.w),
-                      Text(text, style: TextApp.regular20black),
+                      Text(text, style: TextApp.regular20blackInter),
                     ],
                   )
-            : Text(text, style: textStyle ?? TextApp.regular20black),
+            : Text(text, style: textStyle ?? TextApp.regular20blackInter),
       ),
     );
   }

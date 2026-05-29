@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:injectable/injectable.dart';
 
 import '../apiServices/api_services.dart';
@@ -11,4 +13,10 @@ abstract class DiModule {
 
   @singleton
   ApiServices provideApiServices(Dio dio) => ApiServices(dio);
+
+  @singleton
+  FirebaseAuth provideFirebaseAuth() => FirebaseAuth.instance;
+
+  @singleton
+  GoogleSignIn provideGoogleSignIn() => GoogleSignIn();
 }

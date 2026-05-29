@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:moives/config/theme/path_image.dart';
 
 import '../../../config/theme/color_app.dart';
 import '../../../config/theme/text_app.dart';
@@ -73,10 +75,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
         hintStyle: TextApp.regular16White,
         prefixIcon: Container(
           padding: EdgeInsets.only(
-            left: 16.w,
+            left: 14.w,
             right: 12.w,
-            bottom: 12.h,
-            top: 12.h,
+            bottom: 8.h,
+            top: 8.h,
           ),
           child: widget.prefixIconName,
         ),
@@ -88,16 +90,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   });
                 },
                 child: isObscured
-                    ? Icon(
-                        Icons.visibility_off,
-                        color: ColorApp.whiteColor,
-                        size: 26,
-                      )
-                    : Icon(
-                        Icons.visibility,
-                        color: ColorApp.whiteColor,
-                        size: 26,
-                      ),
+                    ? Padding(
+                  padding: EdgeInsets.all(8.sp),
+                  child: SvgPicture.asset(PathImage.unVisible),
+                )
+                    : Padding(
+                  padding: EdgeInsets.all(8.sp),
+                  child: SvgPicture.asset(PathImage.visible),
+                )
               )
             : null,
       ),
