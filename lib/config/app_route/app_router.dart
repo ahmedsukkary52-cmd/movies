@@ -1,6 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moives/config/app_route/app_routes_name.dart';
+import 'package:moives/features/auth/presentation/auth/forgot_password/forget_password_page.dart';
+import 'package:moives/features/auth/presentation/auth/login/login_page.dart';
+import 'package:moives/features/auth/presentation/auth/register/register_page.dart';
 import 'package:moives/features/movies/presentation/pages/home/ui/home_page.dart';
 import 'package:moives/features/movies/presentation/pages/movie_details/ui/movie_details_page.dart';
 import 'package:moives/features/movies/presentation/pages/onBoarding/on_boarding.dart';
@@ -20,6 +23,18 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.onBoarding,
         builder: (context, state) => const OnboardingScreens(),
+      ),
+      GoRoute(
+        path: AppRoutes.register,
+        builder: (context, state) => RegisterPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        builder: (context, state) => ForgotPasswordPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.login,
+        builder: (context, state) => LoginPage(),
       ),
       GoRoute(
         path: '/details/:id',

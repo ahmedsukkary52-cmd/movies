@@ -172,5 +172,5 @@ class _OnboardingScreensState extends State<OnboardingScreens> {
 
   void back() => introKey.currentState?.previous();
 
-  void onFinish() => context.push(AppRoutes.main);
+  void onFinish() => context.push(AppRoutes.login);
 }

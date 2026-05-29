@@ -10,12 +10,27 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:dio/dio.dart' as _i361;
+import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:get_it/get_it.dart' as _i174;
+import 'package:google_sign_in/google_sign_in.dart' as _i116;
 import 'package:injectable/injectable.dart' as _i526;
 
 import '../../core/network/apiServices/api_services.dart' as _i48;
 import '../../core/network/dio/dio_client.dart' as _i765;
 import '../../core/network/dio/dio_module.dart' as _i555;
+import '../../features/auth/data/data_source/remote/auth_remote_data_source_impl.dart'
+    as _i923;
+import '../../features/auth/data/repositories/auth_repository_impl.dart'
+    as _i153;
+import '../../features/auth/domain/data_sources/remote/auth_remote_data_source.dart'
+    as _i633;
+import '../../features/auth/domain/repositories/auth_repository.dart' as _i787;
+import '../../features/auth/domain/usecases/forget_password_usecase.dart'
+    as _i948;
+import '../../features/auth/domain/usecases/google_login_usecase.dart' as _i850;
+import '../../features/auth/domain/usecases/login_usecase.dart' as _i188;
+import '../../features/auth/domain/usecases/register_usecase.dart' as _i941;
+import '../../features/auth/presentation/auth/cubit/auth_cubit.dart' as _i476;
 import '../../features/movies/data/datasources/remote/movies_remote_data_source_impl.dart'
     as _i587;
 import '../../features/movies/data/repositories/movies_repository_impl.dart'
@@ -50,17 +65,50 @@ extension GetItInjectableX on _i174.GetIt {
     final diModule = _$DiModule();
     gh.factory<_i175.BottomNavCubit>(() => _i175.BottomNavCubit());
     gh.singleton<_i765.DioClient>(() => _i765.DioClient());
+    gh.singleton<_i59.FirebaseAuth>(() => diModule.provideFirebaseAuth());
+    gh.singleton<_i116.GoogleSignIn>(() => diModule.provideGoogleSignIn());
     gh.singleton<_i361.Dio>(() => diModule.provideDio(gh<_i765.DioClient>()));
     gh.singleton<_i48.ApiServices>(
       () => diModule.provideApiServices(gh<_i361.Dio>()),
+    );
+    gh.factory<_i633.AuthRemoteDataSource>(
+      () => _i923.AuthRemoteDataSourceImpl(
+        gh<_i59.FirebaseAuth>(),
+        gh<_i116.GoogleSignIn>(),
+      ),
     );
     gh.factory<_i322.MoviesRemoteDataSource>(
       () =>
           _i587.MoviesRemoteDataSourceImpl(apiServices: gh<_i48.ApiServices>()),
     );
+    gh.factory<_i787.AuthRepository>(
+      () => _i153.AuthRepositoryImpl(
+        remoteDataSource: gh<_i633.AuthRemoteDataSource>(),
+      ),
+    );
     gh.factory<_i435.MoviesRepository>(
       () => _i985.MoviesRepositoryImpl(
         remoteDataSource: gh<_i322.MoviesRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i948.ForgetPasswordUseCase>(
+      () => _i948.ForgetPasswordUseCase(gh<_i787.AuthRepository>()),
+    );
+    gh.factory<_i850.GoogleLoginUseCase>(
+      () => _i850.GoogleLoginUseCase(gh<_i787.AuthRepository>()),
+    );
+    gh.factory<_i188.LoginUseCase>(
+      () => _i188.LoginUseCase(gh<_i787.AuthRepository>()),
+    );
+    gh.factory<_i941.RegisterUseCase>(
+      () => _i941.RegisterUseCase(gh<_i787.AuthRepository>()),
+    );
+    gh.factory<_i476.AuthCubit>(
+      () => _i476.AuthCubit(
+        loginUseCase: gh<_i188.LoginUseCase>(),
+        googleLoginUseCase: gh<_i850.GoogleLoginUseCase>(),
+        registerUseCase: gh<_i941.RegisterUseCase>(),
+        forgetPasswordUseCase: gh<_i948.ForgetPasswordUseCase>(),
       ),
     );
     gh.factory<_i376.MovieDetailsUseCase>(

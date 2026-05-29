@@ -27,6 +27,7 @@ class PathImage {
   static const String g7 = "assets/images/g7.png";
   static const String g8 = "assets/images/g8.png";
   static const String g9 = "assets/images/g9.png";
+  static const String logo = "assets/images/logo.png";
   static const String home = "assets/images/home.svg";
   static const String name = "assets/images/name.svg";
   static const String password = "assets/images/password.svg";
