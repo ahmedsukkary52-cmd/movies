@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:moives/features/auth/domain/usecases/forget_password_usecase.dart';
+import 'package:moives/features/auth/domain/usecases/logout_usecase.dart';
 
 import '../../../../../core/usecases/auth_params.dart';
 import '../../../../../core/usecases/no_params.dart';
@@ -16,12 +17,23 @@ class AuthCubit extends Cubit<AuthStates> {
     required this.googleLoginUseCase,
     required this.registerUseCase,
     required this.forgetPasswordUseCase,
+    required this.logoutUseCase
   }) : super(AuthInitial());
 
   final LoginUseCase loginUseCase;
   final GoogleLoginUseCase googleLoginUseCase;
   final RegisterUseCase registerUseCase;
   final ForgetPasswordUseCase forgetPasswordUseCase;
+  final LogoutUseCase logoutUseCase;
+
+  Future<void> logout() async {
+    emit(AuthLoading());
+    final response = await logoutUseCase(NoParams());
+    response.fold(
+          (failure) => emit(AuthError(message: failure.message)),
+          (_) => emit(AuthInitial()),
+    );
+  }
 
   Future<void> login({required String email, required String password}) async {
     emit(AuthLoading());

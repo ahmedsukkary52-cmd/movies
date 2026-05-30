@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:moives/config/di/di.dart';
 import 'package:moives/config/theme/color_app.dart';
 import 'package:moives/config/theme/path_image.dart';
+import 'package:moives/config/theme/text_app.dart';
 import 'package:moives/core/utils/widgets/custom_text_field.dart';
 import 'package:moives/core/utils/widgets/movie_item.dart';
 import 'package:moives/features/movies/presentation/pages/search/cubit/search_cubit.dart';
@@ -42,7 +43,8 @@ class _SearchPageState extends State<SearchPage> {
             return Center(child: CircularProgressIndicator());
           }
           if (state is SearchError) {
-            return Center(child: Text(state.message));
+            return Center(
+                child: Text(state.message, style: TextApp.bold24White,));
           }
           if (state is SearchLoadingMore || state is SearchSuccess) {
             return SafeArea(child: Padding(

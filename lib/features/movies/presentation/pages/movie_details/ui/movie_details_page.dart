@@ -16,6 +16,8 @@ import 'package:moives/features/movies/presentation/pages/movie_details/widget/g
 import 'package:moives/features/movies/presentation/pages/movie_details/widget/screen_shots.dart';
 
 import '../../../../../../core/utils/widgets/movie_item.dart';
+import '../../../../../auth/presentation/auth/profile/cubit/profile_cubit.dart';
+import '../../../../domain/usecases/is_in_watch_list_usecase.dart';
 
 class MovieDetailsPage extends StatefulWidget {
   const MovieDetailsPage({super.key, required this.movieId});
@@ -28,13 +30,24 @@ class MovieDetailsPage extends StatefulWidget {
 
 class _MovieDetailsPageState extends State<MovieDetailsPage> {
   DetailsCubit cubit = getIt<DetailsCubit>();
+  ProfileCubit profileCubit = getIt<ProfileCubit>();
+  bool _isInWatchlist = false;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     cubit.getMovieDetails(movieId: widget.movieId);
     cubit.getMovieSuggestions(movieId: widget.movieId);
+    _checkWatchlist();
+    profileCubit.addToHistory(widget.movieId);
+  }
+
+  Future<void> _checkWatchlist() async {
+    final result = await getIt<IsInWatchlistUseCase>()(widget.movieId);
+    result.fold(
+      (failure) => null,
+      (isIn) => setState(() => _isInWatchlist = isIn),
+    );
   }
 
   @override
@@ -83,8 +96,15 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
 
                   actions: [
                     IconButton(
-                      onPressed: () {},
-                      icon: SvgPicture.asset(PathImage.bookMark),
+                      onPressed: () {
+                        profileCubit.toggleWatchlist(widget.movieId);
+                        setState(() => _isInWatchlist = !_isInWatchlist);
+                      },
+                      icon: SvgPicture.asset(
+                        _isInWatchlist
+                            ? PathImage.bookMarkFilled
+                            : PathImage.bookMark,
+                      ),
                     ),
                   ],
 

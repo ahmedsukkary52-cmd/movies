@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moives/features/movies/presentation/pages/bottom_nav/cubit/bottom_nav_cubit.dart';
 import 'package:moives/features/movies/presentation/pages/bottom_nav/cubit/bottom_nav_state.dart';
 import 'package:moives/features/movies/presentation/pages/home/ui/home_page.dart';
-import 'package:moives/features/movies/presentation/pages/profile/ui/profile_page.dart';
 
+import '../../../../../auth/presentation/auth/profile/ui/profile_page.dart';
 import '../../browse/ui/browse_page.dart';
 import '../../search/ui/search_page.dart';
 import '../widget/custom_bottom_nav.dart';
