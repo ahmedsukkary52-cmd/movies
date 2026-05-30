@@ -14,6 +14,7 @@ import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:google_sign_in/google_sign_in.dart' as _i116;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 import '../../core/network/apiServices/api_services.dart' as _i48;
 import '../../core/network/dio/dio_client.dart' as _i765;
@@ -29,21 +30,48 @@ import '../../features/auth/domain/usecases/forget_password_usecase.dart'
     as _i948;
 import '../../features/auth/domain/usecases/google_login_usecase.dart' as _i850;
 import '../../features/auth/domain/usecases/login_usecase.dart' as _i188;
+import '../../features/auth/domain/usecases/logout_usecase.dart' as _i48;
 import '../../features/auth/domain/usecases/register_usecase.dart' as _i941;
-import '../../features/auth/presentation/auth/cubit/auth_cubit.dart' as _i476;
+import '../../features/auth/presentation/auth/cubit/auth_cubit.dart' as _i72;
+import '../../features/auth/presentation/auth/profile/cubit/profile_cubit.dart'
+    as _i813;
+import '../../features/movies/data/datasources/local/history_local_data_source_impl.dart'
+    as _i613;
+import '../../features/movies/data/datasources/local/watch_list_local_data_source_impl.dart'
+    as _i777;
 import '../../features/movies/data/datasources/remote/movies_remote_data_source_impl.dart'
     as _i587;
 import '../../features/movies/data/repositories/movies_repository_impl.dart'
     as _i985;
+import '../../features/movies/data/repositories/watch_list_repository_impl.dart'
+    as _i1000;
+import '../../features/movies/domain/datasource/local/history_local_data_source.dart'
+    as _i864;
+import '../../features/movies/domain/datasource/local/watch_list_local_data_source.dart'
+    as _i779;
 import '../../features/movies/domain/datasource/remote/movies_remote_data_source.dart'
     as _i322;
 import '../../features/movies/domain/repositories/movies_repository.dart'
     as _i435;
+import '../../features/movies/domain/repositories/watch_list_repository.dart'
+    as _i756;
+import '../../features/movies/domain/usecases/add_to_history_usecase.dart'
+    as _i665;
+import '../../features/movies/domain/usecases/add_to_watch_list_usecase.dart'
+    as _i1044;
+import '../../features/movies/domain/usecases/get_history_usecase.dart'
+    as _i967;
+import '../../features/movies/domain/usecases/get_watch_list_usecase.dart'
+    as _i36;
+import '../../features/movies/domain/usecases/is_in_watch_list_usecase.dart'
+    as _i351;
 import '../../features/movies/domain/usecases/movie_details_use_case.dart'
     as _i376;
 import '../../features/movies/domain/usecases/movie_suggestions_use_case.dart'
     as _i626;
 import '../../features/movies/domain/usecases/movie_use_case.dart' as _i207;
+import '../../features/movies/domain/usecases/remove_from_watch_list_usecase.dart'
+    as _i60;
 import '../../features/movies/presentation/pages/bottom_nav/cubit/bottom_nav_cubit.dart'
     as _i175;
 import '../../features/movies/presentation/pages/browse/cubit/browse_cubit.dart'
@@ -57,12 +85,16 @@ import '../../features/movies/presentation/pages/search/cubit/search_cubit.dart'
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
-  _i174.GetIt init({
+  Future<_i174.GetIt> init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
-  }) {
+  }) async {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final diModule = _$DiModule();
+    await gh.factoryAsync<_i460.SharedPreferences>(
+      () => diModule.provideSharedPreferences(),
+      preResolve: true,
+    );
     gh.factory<_i175.BottomNavCubit>(() => _i175.BottomNavCubit());
     gh.singleton<_i765.DioClient>(() => _i765.DioClient());
     gh.singleton<_i59.FirebaseAuth>(() => diModule.provideFirebaseAuth());
@@ -70,6 +102,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i361.Dio>(() => diModule.provideDio(gh<_i765.DioClient>()));
     gh.singleton<_i48.ApiServices>(
       () => diModule.provideApiServices(gh<_i361.Dio>()),
+    );
+    gh.factory<_i864.HistoryLocalDataSource>(
+      () => _i613.HistoryLocalDataSourceImpl(gh<_i460.SharedPreferences>()),
     );
     gh.factory<_i633.AuthRemoteDataSource>(
       () => _i923.AuthRemoteDataSourceImpl(
@@ -81,6 +116,15 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i587.MoviesRemoteDataSourceImpl(apiServices: gh<_i48.ApiServices>()),
     );
+    gh.factory<_i779.WatchlistLocalDataSource>(
+      () => _i777.WatchlistLocalDataSourceImpl(gh<_i460.SharedPreferences>()),
+    );
+    gh.factory<_i756.WatchlistRepository>(
+      () => _i1000.WatchlistRepositoryImpl(
+        watchlistDataSource: gh<_i779.WatchlistLocalDataSource>(),
+        historyDataSource: gh<_i864.HistoryLocalDataSource>(),
+      ),
+    );
     gh.factory<_i787.AuthRepository>(
       () => _i153.AuthRepositoryImpl(
         remoteDataSource: gh<_i633.AuthRemoteDataSource>(),
@@ -91,6 +135,24 @@ extension GetItInjectableX on _i174.GetIt {
         remoteDataSource: gh<_i322.MoviesRemoteDataSource>(),
       ),
     );
+    gh.factory<_i665.AddToHistoryUseCase>(
+      () => _i665.AddToHistoryUseCase(gh<_i756.WatchlistRepository>()),
+    );
+    gh.factory<_i1044.AddToWatchlistUseCase>(
+      () => _i1044.AddToWatchlistUseCase(gh<_i756.WatchlistRepository>()),
+    );
+    gh.factory<_i967.GetHistoryUseCase>(
+      () => _i967.GetHistoryUseCase(gh<_i756.WatchlistRepository>()),
+    );
+    gh.factory<_i36.GetWatchlistUseCase>(
+      () => _i36.GetWatchlistUseCase(gh<_i756.WatchlistRepository>()),
+    );
+    gh.factory<_i351.IsInWatchlistUseCase>(
+      () => _i351.IsInWatchlistUseCase(gh<_i756.WatchlistRepository>()),
+    );
+    gh.factory<_i60.RemoveFromWatchlistUseCase>(
+      () => _i60.RemoveFromWatchlistUseCase(gh<_i756.WatchlistRepository>()),
+    );
     gh.factory<_i948.ForgetPasswordUseCase>(
       () => _i948.ForgetPasswordUseCase(gh<_i787.AuthRepository>()),
     );
@@ -100,16 +162,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i188.LoginUseCase>(
       () => _i188.LoginUseCase(gh<_i787.AuthRepository>()),
     );
+    gh.factory<_i48.LogoutUseCase>(
+      () => _i48.LogoutUseCase(gh<_i787.AuthRepository>()),
+    );
     gh.factory<_i941.RegisterUseCase>(
       () => _i941.RegisterUseCase(gh<_i787.AuthRepository>()),
-    );
-    gh.factory<_i476.AuthCubit>(
-      () => _i476.AuthCubit(
-        loginUseCase: gh<_i188.LoginUseCase>(),
-        googleLoginUseCase: gh<_i850.GoogleLoginUseCase>(),
-        registerUseCase: gh<_i941.RegisterUseCase>(),
-        forgetPasswordUseCase: gh<_i948.ForgetPasswordUseCase>(),
-      ),
     );
     gh.factory<_i376.MovieDetailsUseCase>(
       () => _i376.MovieDetailsUseCase(repository: gh<_i435.MoviesRepository>()),
@@ -128,11 +185,31 @@ extension GetItInjectableX on _i174.GetIt {
         suggestionsUseCase: gh<_i626.MovieSuggestionsUseCase>(),
       ),
     );
+    gh.factory<_i72.AuthCubit>(
+      () => _i72.AuthCubit(
+        loginUseCase: gh<_i188.LoginUseCase>(),
+        googleLoginUseCase: gh<_i850.GoogleLoginUseCase>(),
+        registerUseCase: gh<_i941.RegisterUseCase>(),
+        forgetPasswordUseCase: gh<_i948.ForgetPasswordUseCase>(),
+        logoutUseCase: gh<_i48.LogoutUseCase>(),
+      ),
+    );
     gh.singleton<_i981.BrowseCubit>(
       () => _i981.BrowseCubit(useCase: gh<_i207.GetMovieUseCase>()),
     );
     gh.factory<_i999.SearchCubit>(
       () => _i999.SearchCubit(useCase: gh<_i207.GetMovieUseCase>()),
+    );
+    gh.factory<_i813.ProfileCubit>(
+      () => _i813.ProfileCubit(
+        getWatchlistUseCase: gh<_i36.GetWatchlistUseCase>(),
+        getHistoryUseCase: gh<_i967.GetHistoryUseCase>(),
+        addToWatchlistUseCase: gh<_i1044.AddToWatchlistUseCase>(),
+        removeFromWatchlistUseCase: gh<_i60.RemoveFromWatchlistUseCase>(),
+        isInWatchlistUseCase: gh<_i351.IsInWatchlistUseCase>(),
+        addToHistoryUseCase: gh<_i665.AddToHistoryUseCase>(),
+        getMovieUseCase: gh<_i207.GetMovieUseCase>(),
+      ),
     );
     gh.singleton<_i483.HomeCubit>(
       () => _i483.HomeCubit(getMovieUseCase: gh<_i207.GetMovieUseCase>()),

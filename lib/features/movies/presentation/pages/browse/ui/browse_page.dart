@@ -71,7 +71,7 @@ class _BrowsePageState extends State<BrowsePage> {
               }
               if (state is ErrorBrowse) {
                 return Center(
-                  child: Text(state.message, style: TextApp.regular16White),
+                  child: Text(state.message, style: TextApp.bold24White),
                 );
               }
               if (state is SuccessBrowse) {
