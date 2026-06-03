@@ -9,6 +9,7 @@ import 'package:moives/core/utils/widgets/movie_item.dart';
 import 'package:moives/features/movies/presentation/pages/home/cubit/states.dart';
 import 'package:moives/features/movies/presentation/pages/home/cubit/view_model.dart';
 
+import '../../../../../../core/utils/widgets/error_widget.dart';
 import '../../bottom_nav/cubit/bottom_nav_cubit.dart';
 
 class HomePage extends StatefulWidget {
@@ -42,8 +43,15 @@ class _HomePageState extends State<HomePage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (state is HomeError) {
-            return Center(child: Text(state.message, style: TextApp.bold24White,
-              textAlign: TextAlign.center,));
+            return AppErrorWidget(
+              message: state.message,
+              onRetry: () {
+                print('=== retry pressed ===');
+                print('=== _hasMore: ${cubit.hasMore}, _isLoadingMore: ${cubit
+                    .isLoadingMore} ===');
+                cubit.getMoviesList();
+              },
+            );
           }
           if (state is HomeSuccess) {
             return Container(

@@ -38,4 +38,5 @@ class PathImage {
   static const String visible = "assets/images/visibale.svg";
   static const String error = "assets/images/error.svg";
   static const String bookMarkFilled = "assets/images/bookMarkFilled.svg";
+  static const String mainError = "assets/images/main_error.png";
 }
