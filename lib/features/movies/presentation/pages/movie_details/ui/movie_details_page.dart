@@ -15,6 +15,7 @@ import 'package:moives/features/movies/presentation/pages/movie_details/widget/d
 import 'package:moives/features/movies/presentation/pages/movie_details/widget/genre.dart';
 import 'package:moives/features/movies/presentation/pages/movie_details/widget/screen_shots.dart';
 
+import '../../../../../../core/utils/widgets/error_widget.dart';
 import '../../../../../../core/utils/widgets/movie_item.dart';
 import '../../../../../auth/presentation/auth/profile/cubit/profile_cubit.dart';
 import '../../../../domain/usecases/is_in_watch_list_usecase.dart';
@@ -59,12 +60,13 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
           if (state is DetailsLoading) {
             return Center(child: const CircularProgressIndicator());
           } else if (state is DetailsError) {
-            return Center(
-              child: Text(
-                state.message,
-                style: TextApp.bold24White,
-                textAlign: TextAlign.center,
-              ),
+            return AppErrorWidget(
+                message: state.message,
+                onRetry: () {
+                  cubit.getMovieSuggestions(movieId: widget.movieId);
+                  cubit.getMovieDetails(movieId: widget.movieId);
+                  _checkWatchlist();
+                }
             );
           } else if (state is DetailsSuccess) {
             var movie = state.movieDetailsData?.movie;

@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:moives/config/di/di.dart';
-import 'package:moives/config/theme/text_app.dart';
 import 'package:moives/features/movies/presentation/pages/browse/cubit/browse_cubit.dart';
 import 'package:moives/features/movies/presentation/pages/browse/cubit/browse_states.dart';
 import 'package:moives/features/movies/presentation/pages/browse/widget/genre_item.dart';
 
 import '../../../../../../config/theme/color_app.dart';
+import '../../../../../../core/utils/widgets/error_widget.dart';
 import '../../../../../../core/utils/widgets/movie_item.dart';
 import '../../bottom_nav/cubit/bottom_nav_cubit.dart';
 import '../../bottom_nav/cubit/bottom_nav_state.dart';
@@ -70,8 +70,9 @@ class _BrowsePageState extends State<BrowsePage> {
                 return Center(child: CircularProgressIndicator());
               }
               if (state is ErrorBrowse) {
-                return Center(
-                  child: Text(state.message, style: TextApp.bold24White),
+                return AppErrorWidget(
+                  message: state.message,
+                  onRetry: () => cubit.getMoviesByGenre('Action'),
                 );
               }
               if (state is SuccessBrowse) {

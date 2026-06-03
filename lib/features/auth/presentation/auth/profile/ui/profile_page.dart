@@ -172,7 +172,6 @@ class _ProfilePageState extends State<ProfilePage>
             body: TabBarView(
               controller: _tabController,
               children: [
-                // Watchlist Tab
                 state.watchlist.isEmpty
                     ? Center(child: Image.asset(PathImage.empty, height: 124.h))
                     : GridView.builder(
