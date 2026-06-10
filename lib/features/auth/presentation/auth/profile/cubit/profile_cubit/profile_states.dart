@@ -1,5 +1,5 @@
-import '../../../../../auth/domain/entities/user.dart';
-import '../../../../../movies/domain/entities/response/movie_list/movie.dart';
+import '../../../../../../movies/domain/entities/response/movie_list/movie.dart';
+import '../../../../../domain/entities/user.dart';
 
 sealed class ProfileStates {}
 
@@ -13,6 +13,8 @@ class ProfileSuccess extends ProfileStates {
   final List<Movie> history;
   final int watchlistCount;
   final int historyCount;
+  final String? phone;
+  final bool isLoadingLists;
 
   ProfileSuccess({
     required this.user,
@@ -20,6 +22,8 @@ class ProfileSuccess extends ProfileStates {
     required this.history,
     required this.watchlistCount,
     required this.historyCount,
+    required this.phone,
+    this.isLoadingLists = false,
   });
 }
 

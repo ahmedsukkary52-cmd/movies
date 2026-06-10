@@ -58,6 +58,24 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         idToken: googleAuth.idToken,
       );
       final result = await _auth.signInWithCredential(credential);
+
+      final doc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(result.user!.uid)
+          .get();
+
+      if (!doc.exists) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(result.user!.uid)
+            .set({
+              'name': result.user!.displayName,
+              'email': result.user!.email,
+              'phone': '',
+              'avatar': 'assets/images/g1.png',
+            });
+      }
+
       return UserEntity(
         id: result.user!.uid,
         email: result.user!.email!,

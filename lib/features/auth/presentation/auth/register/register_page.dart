@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:moives/config/theme/color_app.dart';
 import 'package:moives/config/theme/path_image.dart';
 import 'package:moives/config/theme/text_app.dart';
 import 'package:moives/core/utils/widgets/custom_elevated_button.dart';
@@ -68,6 +69,20 @@ class _RegisterPageState extends State<RegisterPage> {
         }
       },
       child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: ColorApp.primary,
+            ),
+          ),
+          toolbarHeight: 60,
+          title: Text('Register', style: TextApp.regular16Wallow),
+        ),
         body: SafeArea(
           child: BlocBuilder<AuthCubit, AuthStates>(
             bloc: cubit,
@@ -77,7 +92,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      SizedBox(height: 30.h),
                       CarouselSlider.builder(
                         itemCount: avatar.length,
                         itemBuilder: (context, index, realIndex) {

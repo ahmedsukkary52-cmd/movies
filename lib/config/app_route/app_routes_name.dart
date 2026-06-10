@@ -9,4 +9,5 @@ class AppRoutes {
   static const String suggestions = '/suggestions';
   static const String onBoarding = '/onBoarding';
   static const String main = '/main';
+  static const String editProfile = '/editProfile';
 }
