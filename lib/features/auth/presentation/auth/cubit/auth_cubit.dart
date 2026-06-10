@@ -3,11 +3,13 @@ import 'package:injectable/injectable.dart';
 import 'package:moives/features/auth/domain/usecases/forget_password_usecase.dart';
 import 'package:moives/features/auth/domain/usecases/logout_usecase.dart';
 
+import '../../../../../config/di/di.dart';
 import '../../../../../core/usecases/auth_params.dart';
 import '../../../../../core/usecases/no_params.dart';
 import '../../../domain/usecases/google_login_usecase.dart';
 import '../../../domain/usecases/login_usecase.dart';
 import '../../../domain/usecases/register_usecase.dart';
+import '../profile/cubit/profile_cubit/profile_cubit.dart';
 import 'auth_states.dart';
 
 @injectable
@@ -31,18 +33,23 @@ class AuthCubit extends Cubit<AuthStates> {
     final response = await logoutUseCase(NoParams());
     response.fold(
           (failure) => emit(AuthError(message: failure.message)),
-          (_) => emit(AuthInitial()),
+          (_) {
+        getIt<ProfileCubit>().reset();
+        emit(AuthInitial());
+      },
     );
   }
 
   Future<void> login({required String email, required String password}) async {
     emit(AuthLoading());
     final response = await loginUseCase(
-      LoginParams(email: email, password: password),
-    );
+        LoginParams(email: email, password: password));
     response.fold(
-      (failure) => emit(AuthError(message: failure.message)),
-      (user) => emit(AuthSuccess(user: user)),
+          (failure) => emit(AuthError(message: failure.message)),
+          (user) {
+        getIt<ProfileCubit>().reset();
+        emit(AuthSuccess(user: user));
+      },
     );
   }
 
@@ -50,11 +57,13 @@ class AuthCubit extends Cubit<AuthStates> {
     emit(AuthLoading());
     final response = await googleLoginUseCase(NoParams());
     response.fold(
-      (failure) => emit(AuthError(message: failure.message)),
-      (user) => emit(AuthSuccess(user: user)),
+          (failure) => emit(AuthError(message: failure.message)),
+          (user) {
+        getIt<ProfileCubit>().reset();
+        emit(AuthSuccess(user: user));
+      },
     );
   }
-
   Future<void> register({
     required String email,
     required String password,

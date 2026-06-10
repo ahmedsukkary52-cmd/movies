@@ -3,17 +3,16 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../core/errors/failure.dart';
 import '../../../../core/usecases/base_use_case.dart';
-import '../../../../core/usecases/no_params.dart';
+import '../../../../core/usecases/watch_list_params.dart';
 import '../repositories/watch_list_repository.dart';
 
 @injectable
-class GetHistoryUseCase extends BaseUseCase<List<int>, NoParams> {
+class GetHistoryUseCase extends BaseUseCase<List<int>, UserIdParams> {
   final WatchlistRepository repository;
-
   GetHistoryUseCase(this.repository);
 
   @override
-  Future<Either<Failure, List<int>>> call(NoParams params) {
-    return repository.getHistory();
+  Future<Either<Failure, List<int>>> call(UserIdParams params) {
+    return repository.getHistory(userId: params.userId);
   }
 }

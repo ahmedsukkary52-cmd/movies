@@ -33,24 +33,26 @@ import '../../features/auth/domain/usecases/login_usecase.dart' as _i188;
 import '../../features/auth/domain/usecases/logout_usecase.dart' as _i48;
 import '../../features/auth/domain/usecases/register_usecase.dart' as _i941;
 import '../../features/auth/presentation/auth/cubit/auth_cubit.dart' as _i72;
-import '../../features/auth/presentation/auth/profile/cubit/profile_cubit.dart'
-    as _i813;
-import '../../features/movies/data/datasources/local/history_local_data_source_impl.dart'
-    as _i613;
-import '../../features/movies/data/datasources/local/watch_list_local_data_source_impl.dart'
-    as _i777;
+import '../../features/auth/presentation/auth/profile/cubit/edit_profile_cubit/edit_profile_cubit.dart'
+    as _i667;
+import '../../features/auth/presentation/auth/profile/cubit/profile_cubit/profile_cubit.dart'
+    as _i655;
+import '../../features/movies/data/datasources/remote/history_remote_data_source_impl.dart'
+    as _i108;
 import '../../features/movies/data/datasources/remote/movies_remote_data_source_impl.dart'
     as _i587;
+import '../../features/movies/data/datasources/remote/watch_list_remote_data_source_impl.dart'
+    as _i1026;
 import '../../features/movies/data/repositories/movies_repository_impl.dart'
     as _i985;
 import '../../features/movies/data/repositories/watch_list_repository_impl.dart'
     as _i1000;
-import '../../features/movies/domain/datasource/local/history_local_data_source.dart'
-    as _i864;
-import '../../features/movies/domain/datasource/local/watch_list_local_data_source.dart'
-    as _i779;
+import '../../features/movies/domain/datasource/remote/history_remote_data_source.dart'
+    as _i897;
 import '../../features/movies/domain/datasource/remote/movies_remote_data_source.dart'
     as _i322;
+import '../../features/movies/domain/datasource/remote/watch_list_remote_data_source.dart'
+    as _i165;
 import '../../features/movies/domain/repositories/movies_repository.dart'
     as _i435;
 import '../../features/movies/domain/repositories/watch_list_repository.dart'
@@ -99,40 +101,27 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i765.DioClient>(() => _i765.DioClient());
     gh.singleton<_i59.FirebaseAuth>(() => diModule.provideFirebaseAuth());
     gh.singleton<_i116.GoogleSignIn>(() => diModule.provideGoogleSignIn());
+    gh.singleton<_i667.EditProfileCubit>(() => _i667.EditProfileCubit());
+    gh.factory<_i897.HistoryRemoteDataSource>(
+      () => _i108.HistoryRemoteDataSourceImpl(),
+    );
     gh.singleton<_i361.Dio>(() => diModule.provideDio(gh<_i765.DioClient>()));
     gh.singleton<_i48.ApiServices>(
       () => diModule.provideApiServices(gh<_i361.Dio>()),
     );
-    gh.factory<_i864.HistoryLocalDataSource>(
-      () => _i613.HistoryLocalDataSourceImpl(gh<_i460.SharedPreferences>()),
+    gh.factory<_i165.WatchlistRemoteDataSource>(
+      () => _i1026.WatchlistRemoteDataSourceImpl(),
+    );
+    gh.factory<_i756.WatchlistRepository>(
+      () => _i1000.WatchlistRepositoryImpl(
+        watchlistDataSource: gh<_i165.WatchlistRemoteDataSource>(),
+        historyDataSource: gh<_i897.HistoryRemoteDataSource>(),
+      ),
     );
     gh.factory<_i633.AuthRemoteDataSource>(
       () => _i923.AuthRemoteDataSourceImpl(
         gh<_i59.FirebaseAuth>(),
         gh<_i116.GoogleSignIn>(),
-      ),
-    );
-    gh.factory<_i322.MoviesRemoteDataSource>(
-      () =>
-          _i587.MoviesRemoteDataSourceImpl(apiServices: gh<_i48.ApiServices>()),
-    );
-    gh.factory<_i779.WatchlistLocalDataSource>(
-      () => _i777.WatchlistLocalDataSourceImpl(gh<_i460.SharedPreferences>()),
-    );
-    gh.factory<_i756.WatchlistRepository>(
-      () => _i1000.WatchlistRepositoryImpl(
-        watchlistDataSource: gh<_i779.WatchlistLocalDataSource>(),
-        historyDataSource: gh<_i864.HistoryLocalDataSource>(),
-      ),
-    );
-    gh.factory<_i787.AuthRepository>(
-      () => _i153.AuthRepositoryImpl(
-        remoteDataSource: gh<_i633.AuthRemoteDataSource>(),
-      ),
-    );
-    gh.factory<_i435.MoviesRepository>(
-      () => _i985.MoviesRepositoryImpl(
-        remoteDataSource: gh<_i322.MoviesRemoteDataSource>(),
       ),
     );
     gh.factory<_i665.AddToHistoryUseCase>(
@@ -152,6 +141,20 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i60.RemoveFromWatchlistUseCase>(
       () => _i60.RemoveFromWatchlistUseCase(gh<_i756.WatchlistRepository>()),
+    );
+    gh.factory<_i322.MoviesRemoteDataSource>(
+      () =>
+          _i587.MoviesRemoteDataSourceImpl(apiServices: gh<_i48.ApiServices>()),
+    );
+    gh.factory<_i787.AuthRepository>(
+      () => _i153.AuthRepositoryImpl(
+        remoteDataSource: gh<_i633.AuthRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i435.MoviesRepository>(
+      () => _i985.MoviesRepositoryImpl(
+        remoteDataSource: gh<_i322.MoviesRemoteDataSource>(),
+      ),
     );
     gh.factory<_i948.ForgetPasswordUseCase>(
       () => _i948.ForgetPasswordUseCase(gh<_i787.AuthRepository>()),
@@ -200,15 +203,15 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i999.SearchCubit>(
       () => _i999.SearchCubit(useCase: gh<_i207.GetMovieUseCase>()),
     );
-    gh.factory<_i813.ProfileCubit>(
-      () => _i813.ProfileCubit(
+    gh.singleton<_i655.ProfileCubit>(
+      () => _i655.ProfileCubit(
         getWatchlistUseCase: gh<_i36.GetWatchlistUseCase>(),
         getHistoryUseCase: gh<_i967.GetHistoryUseCase>(),
         addToWatchlistUseCase: gh<_i1044.AddToWatchlistUseCase>(),
         removeFromWatchlistUseCase: gh<_i60.RemoveFromWatchlistUseCase>(),
         isInWatchlistUseCase: gh<_i351.IsInWatchlistUseCase>(),
         addToHistoryUseCase: gh<_i665.AddToHistoryUseCase>(),
-        getMovieUseCase: gh<_i207.GetMovieUseCase>(),
+        movieDetailsUseCase: gh<_i376.MovieDetailsUseCase>(),
       ),
     );
     gh.singleton<_i483.HomeCubit>(

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,9 +16,10 @@ import 'package:moives/features/movies/presentation/pages/movie_details/widget/d
 import 'package:moives/features/movies/presentation/pages/movie_details/widget/genre.dart';
 import 'package:moives/features/movies/presentation/pages/movie_details/widget/screen_shots.dart';
 
+import '../../../../../../core/usecases/watch_list_params.dart';
 import '../../../../../../core/utils/widgets/error_widget.dart';
 import '../../../../../../core/utils/widgets/movie_item.dart';
-import '../../../../../auth/presentation/auth/profile/cubit/profile_cubit.dart';
+import '../../../../../auth/presentation/auth/profile/cubit/profile_cubit/profile_cubit.dart';
 import '../../../../domain/usecases/is_in_watch_list_usecase.dart';
 
 class MovieDetailsPage extends StatefulWidget {
@@ -44,10 +46,14 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
   }
 
   Future<void> _checkWatchlist() async {
-    final result = await getIt<IsInWatchlistUseCase>()(widget.movieId);
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+    final result = await getIt<IsInWatchlistUseCase>()(
+      WatchlistParams(userId: user.uid, movieId: widget.movieId),
+    );
     result.fold(
-      (failure) => null,
-      (isIn) => setState(() => _isInWatchlist = isIn),
+          (failure) => null,
+          (isIn) => setState(() => _isInWatchlist = isIn),
     );
   }
 
@@ -103,9 +109,8 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                         setState(() => _isInWatchlist = !_isInWatchlist);
                       },
                       icon: SvgPicture.asset(
-                        _isInWatchlist
-                            ? PathImage.bookMarkFilled
-                            : PathImage.bookMark,
+                        _isInWatchlist ? PathImage.bookMarkFilled : PathImage
+                            .bookMark,
                       ),
                     ),
                   ],

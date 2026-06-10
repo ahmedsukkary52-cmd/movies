@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:moives/config/app_route/app_routes_name.dart';
 import 'package:moives/features/auth/presentation/auth/forgot_password/forget_password_page.dart';
 import 'package:moives/features/auth/presentation/auth/login/login_page.dart';
+import 'package:moives/features/auth/presentation/auth/profile/ui/edit_profile_page.dart';
 import 'package:moives/features/auth/presentation/auth/register/register_page.dart';
 import 'package:moives/features/movies/presentation/pages/home/ui/home_page.dart';
 import 'package:moives/features/movies/presentation/pages/movie_details/ui/movie_details_page.dart';
@@ -21,6 +22,18 @@ class AppRouter {
         builder: (context, state) => const HomePage(),
       ),
       GoRoute(
+        path: AppRoutes.editProfile,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return EditProfilePage(
+            name: extra?['name'],
+            phone: extra?['phone'],
+            avatar: extra?['avatar'],
+            email: extra?['email'],
+          );
+        },
+      ),
+      GoRoute(
         path: AppRoutes.onBoarding,
         builder: (context, state) => const OnboardingScreens(),
       ),
@@ -30,7 +43,10 @@ class AppRouter {
       ),
       GoRoute(
         path: AppRoutes.forgotPassword,
-        builder: (context, state) => ForgotPasswordPage(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return ForgotPasswordPage(email: extra?['email'] ?? '');
+        },
       ),
       GoRoute(
         path: AppRoutes.login,
