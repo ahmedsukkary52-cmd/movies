@@ -12,7 +12,7 @@ import 'package:moives/main.dart';
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MoviesApp());
+    await tester.pumpWidget(const MoviesApp(initialRoute: '',));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

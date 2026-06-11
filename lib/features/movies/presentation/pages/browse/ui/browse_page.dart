@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:moives/config/di/di.dart';
+import 'package:moives/core/utils/widgets/shimmer_widgets.dart';
 import 'package:moives/features/movies/presentation/pages/browse/cubit/browse_cubit.dart';
 import 'package:moives/features/movies/presentation/pages/browse/cubit/browse_states.dart';
 import 'package:moives/features/movies/presentation/pages/browse/widget/genre_item.dart';
@@ -67,7 +68,7 @@ class _BrowsePageState extends State<BrowsePage> {
             bloc: cubit,
             builder: (context, state) {
               if (state is LoadingBrowse) {
-                return Center(child: CircularProgressIndicator());
+                return const GridShimmer();
               }
               if (state is ErrorBrowse) {
                 return AppErrorWidget(

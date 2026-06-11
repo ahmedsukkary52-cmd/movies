@@ -6,6 +6,7 @@ import 'package:moives/config/di/di.dart';
 import 'package:moives/config/theme/path_image.dart';
 import 'package:moives/config/theme/text_app.dart';
 import 'package:moives/core/utils/widgets/movie_item.dart';
+import 'package:moives/core/utils/widgets/shimmer_widgets.dart';
 import 'package:moives/features/movies/presentation/pages/home/cubit/states.dart';
 import 'package:moives/features/movies/presentation/pages/home/cubit/view_model.dart';
 
@@ -40,15 +41,12 @@ class _HomePageState extends State<HomePage> {
         bloc: cubit,
         builder: (context, state) {
           if (state is HomeLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const HomeShimmer();
           }
           if (state is HomeError) {
             return AppErrorWidget(
               message: state.message,
               onRetry: () {
-                print('=== retry pressed ===');
-                print('=== _hasMore: ${cubit.hasMore}, _isLoadingMore: ${cubit
-                    .isLoadingMore} ===');
                 cubit.getMoviesList();
               },
             );

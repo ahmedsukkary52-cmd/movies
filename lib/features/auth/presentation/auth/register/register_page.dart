@@ -24,21 +24,11 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final TextEditingController name = TextEditingController(
-    text: 'Ahmed Adel Elsukkary',
-  );
-  final TextEditingController email = TextEditingController(
-    text: 'ahmedadel2009@gmail.com',
-  );
-  final TextEditingController password = TextEditingController(
-    text: "Ahmed@2009",
-  );
-  final TextEditingController confirmPassword = TextEditingController(
-    text: "Ahmed@2009",
-  );
-  final TextEditingController phone = TextEditingController(
-    text: '01080875641',
-  );
+  final TextEditingController name = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
+  final TextEditingController confirmPassword = TextEditingController();
+  final TextEditingController phone = TextEditingController();
   final AuthCubit cubit = getIt<AuthCubit>();
   final _formKey = GlobalKey<FormState>();
   int _selectedAvatarIndex = 0;

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:moives/core/utils/widgets/shimmer_widgets.dart';
 
 import '../../../../../../config/app_route/app_routes_name.dart';
 import '../../../../../../config/di/di.dart';
@@ -93,9 +94,6 @@ class _ProfilePageState extends State<ProfilePage>
       child: BlocBuilder<ProfileCubit, ProfileStates>(
         bloc: cubit,
         builder: (context, state) {
-          if (state is ProfileLoading) {
-            return Center(child: CircularProgressIndicator());
-          }
           if (state is ProfileError) {
             return Center(
               child: Text(state.message, style: TextApp.bold24White),
@@ -106,6 +104,7 @@ class _ProfilePageState extends State<ProfilePage>
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
                 SliverAppBar(
                   pinned: true,
+                  toolbarHeight: 0,
                   expandedHeight: MediaQuery.of(context).size.height * .45,
                   backgroundColor: ColorApp.grayColor,
                   flexibleSpace: FlexibleSpaceBar(
@@ -241,12 +240,15 @@ class _ProfilePageState extends State<ProfilePage>
               body: TabBarView(
                 controller: _tabController,
                 children: [
-                  state.watchlist.isEmpty
+                  state.isLoadingLists
+                      ? ProfileGrid()
+                      : state.watchlist.isEmpty
                       ? Center(
                           child: Image.asset(PathImage.empty, height: 124.h),
                         )
                       : GridView.builder(
-                          padding: EdgeInsets.all(16.w),
+                    padding: EdgeInsets.only(
+                        left: 16.w, right: 16.w, top: 16.h, bottom: 120.h),
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3,
@@ -267,7 +269,8 @@ class _ProfilePageState extends State<ProfilePage>
                           child: Image.asset(PathImage.empty, height: 124.h),
                         )
                       : GridView.builder(
-                          padding: EdgeInsets.all(16.w),
+                    padding: EdgeInsets.only(
+                        left: 16.w, right: 16.w, top: 16.h, bottom: 120.h),
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3,

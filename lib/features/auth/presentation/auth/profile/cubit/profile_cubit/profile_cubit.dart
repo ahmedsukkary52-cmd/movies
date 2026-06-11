@@ -43,21 +43,22 @@ class ProfileCubit extends Cubit<ProfileStates> {
   }
 
   Future<void> getProfile(UserEntity user, {bool forceRefresh = false}) async {
+    if (state is ProfileSuccess && !forceRefresh) return;
     _currentUser = user;
 
-    if (state is ProfileSuccess) {
-      final oldState = state as ProfileSuccess;
-      emit(ProfileSuccess(
-        user: user,
-        watchlist: oldState.watchlist,
-        history: oldState.history,
-        watchlistCount: oldState.watchlistCount,
-        historyCount: oldState.historyCount,
-        phone: user.phone,
-      ));
-    } else {
-      emit(ProfileLoading());
-    }
+    emit(ProfileSuccess(
+      user: user,
+      watchlist: state is ProfileSuccess
+          ? (state as ProfileSuccess).watchlist
+          : [],
+      history: state is ProfileSuccess ? (state as ProfileSuccess).history : [],
+      watchlistCount: state is ProfileSuccess ? (state as ProfileSuccess)
+          .watchlistCount : 0,
+      historyCount: state is ProfileSuccess ? (state as ProfileSuccess)
+          .historyCount : 0,
+      phone: user.phone,
+      isLoadingLists: true,
+    ));
 
     final watchlistIds = await getWatchlistUseCase(
         UserIdParams(userId: user.id));
@@ -107,6 +108,7 @@ class ProfileCubit extends Cubit<ProfileStates> {
       watchlistCount: watchlistMovies.length,
       historyCount: historyMovies.length,
       phone: user.phone,
+        isLoadingLists: false
     ));
   }
   Future<void> toggleWatchlist(int movieId) async {
