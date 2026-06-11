@@ -10,6 +10,7 @@ import 'package:moives/config/theme/path_image.dart';
 import 'package:moives/core/utils/widgets/custom_text_field.dart';
 import 'package:moives/core/utils/widgets/error_widget.dart';
 import 'package:moives/core/utils/widgets/movie_item.dart';
+import 'package:moives/core/utils/widgets/shimmer_widgets.dart';
 import 'package:moives/features/movies/presentation/pages/search/cubit/search_cubit.dart';
 import 'package:moives/features/movies/presentation/pages/search/cubit/search_states.dart';
 
@@ -25,7 +26,6 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     cubit.getInitialMovie();
   }
@@ -40,7 +40,7 @@ class _SearchPageState extends State<SearchPage> {
               : cubit.currentMovies;
 
           if (state is SearchLoading) {
-            return Center(child: CircularProgressIndicator());
+            return const GridShimmer();
           }
           if (state is SearchError) {
             return AppErrorWidget(

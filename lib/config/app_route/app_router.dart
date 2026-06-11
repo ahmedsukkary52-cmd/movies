@@ -14,8 +14,9 @@ import '../../features/movies/presentation/pages/bottom_nav/ui/bottom_nav_screen
 import '../di/di.dart';
 
 class AppRouter {
-  static final router = GoRouter(
-    initialLocation: AppRoutes.onBoarding,
+  static GoRouter router(String initialRoute) =>
+      GoRouter(
+        initialLocation: initialRoute,
     routes: [
       GoRoute(
         path: AppRoutes.home,

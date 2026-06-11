@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:moives/config/app_route/app_routes_name.dart';
 import 'package:moives/features/movies/presentation/pages/onBoarding/widget/build_footer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../config/theme/color_app.dart';
 import '../../../../../config/theme/path_image.dart';
@@ -33,7 +34,6 @@ class _OnboardingScreensState extends State<OnboardingScreens> {
     'Finish',
     "Start Watching Now",
   ];
-  int currentIndex = 0;
   final introKey = GlobalKey<IntroductionScreenState>();
 
   final PageDecoration pageDecoration = const PageDecoration(
@@ -59,14 +59,11 @@ class _OnboardingScreensState extends State<OnboardingScreens> {
       child: IntroductionScreen(
         key: introKey,
 
-        curve: Curves.easeInOutCubic,
+        curve: Curves.easeInOutCubicEmphasized,
         animationDuration: 600,
         globalBackgroundColor: ColorApp.black,
 
-        onChange: (index) {
-          currentIndex = index;
-          setState(() {});
-        },
+        onChange: (_) {},
 
         showDoneButton: false,
         showBackButton: false,
@@ -172,5 +169,9 @@ class _OnboardingScreensState extends State<OnboardingScreens> {
 
   void back() => introKey.currentState?.previous();
 
-  void onFinish() => context.push(AppRoutes.login);
+  void onFinish() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('seen_onboarding', true);
+    context.go(AppRoutes.login);
+  }
 }

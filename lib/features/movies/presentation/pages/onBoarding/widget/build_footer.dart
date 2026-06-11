@@ -6,9 +6,8 @@ import '../../../../../../config/theme/text_app.dart';
 import '../../../../../../core/utils/widgets/custom_elevated_button.dart';
 
 class BuildFooter extends StatelessWidget {
-  BuildFooter({
+  const BuildFooter({
     super.key,
-    // this.height = .37,
     this.onBack,
     this.isLastPage = false,
     required this.onPressed,
@@ -22,12 +21,11 @@ class BuildFooter extends StatelessWidget {
 
   final VoidCallback? onBack;
 
-  // double height;
-  bool isLastPage;
-  bool haveBack;
-  String titleString;
-  String bodyString;
-  String elevated;
+  final bool isLastPage;
+  final bool haveBack;
+  final String titleString;
+  final String bodyString;
+  final String elevated;
 
   Text title(String titleString) {
     return Text(titleString, style: TextApp.bold24White);
@@ -52,7 +50,7 @@ class BuildFooter extends StatelessWidget {
           topRight: Radius.circular(40),
         ),
       ),
-      padding: EdgeInsetsGeometry.directional(
+      padding: EdgeInsetsDirectional.only(
         bottom: 20.h,
         start: 16.w,
         end: 16.w,

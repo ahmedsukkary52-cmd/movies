@@ -18,12 +18,8 @@ import '../cubit/auth_states.dart';
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
 
-  final TextEditingController email = TextEditingController(
-    text: 'ahmedadel2009@gmail.com',
-  );
-  final TextEditingController password = TextEditingController(
-    text: 'Ahmed@2009',
-  );
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
   final AuthCubit cubit = getIt<AuthCubit>();
   final _formKey = GlobalKey<FormState>();
 
