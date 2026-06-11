@@ -1,4 +1,4 @@
-import 'package:moives/features/movies/data/models/response/movie_list/torrents_dto.dart';
+import 'package:moives/features/movies/data/models/common/torrents_dto.dart';
 import 'package:moives/features/movies/domain/entities/response/movie_list/torrents.dart';
 
 extension TorrentsMapper on TorrentsDto {

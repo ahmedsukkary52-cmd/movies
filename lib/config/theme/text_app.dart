@@ -30,7 +30,7 @@ class TextApp {
     color: ColorApp.primary,
   );
 
-  static final TextStyle regular20Black = GoogleFonts.roboto(
+  static final TextStyle regular20BlackRoboto = GoogleFonts.roboto(
     fontSize: 20,
     fontWeight: FontWeight.normal,
     color: ColorApp.black,
@@ -54,7 +54,7 @@ class TextApp {
     color: ColorApp.whiteColor,
   );
 
-  static final TextStyle regular20black = GoogleFonts.inter(
+  static final TextStyle regular20blackInter = GoogleFonts.inter(
     fontSize: 20,
     fontWeight: FontWeight.normal,
     color: ColorApp.black,
@@ -78,6 +78,18 @@ class TextApp {
     color: ColorApp.primary,
   );
 
+  static final TextStyle regular14White = GoogleFonts.roboto(
+    fontSize: 14,
+    fontWeight: FontWeight.normal,
+    color: ColorApp.whiteColor,
+  );
+
+  static final TextStyle regular15Primary = GoogleFonts.roboto(
+    fontSize: 15,
+    fontWeight: FontWeight.normal,
+    color: ColorApp.primary,
+  );
+
   static final TextStyle black14Wallow = GoogleFonts.roboto(
     fontSize: 14,
     fontWeight: FontWeight.w900,
@@ -89,9 +101,10 @@ class TextApp {
     fontWeight: FontWeight.bold,
     color: ColorApp.primary,
   );
+
   static final TextStyle bold20Black = GoogleFonts.roboto(
     fontSize: 20,
     fontWeight: FontWeight.bold,
-    color: ColorApp.primary,
+    color: ColorApp.black,
   );
 }

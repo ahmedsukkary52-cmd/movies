@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:moives/features/movies/data/models/response/movie_details/movie_details_dto.dart';
 import 'package:moives/features/movies/data/models/response/movie_list/movies_list_dto.dart';
+import 'package:moives/features/movies/data/models/response/movie_suggestions/movie_suggestions_dto.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../../utils/app_constants.dart';
@@ -13,7 +15,20 @@ abstract class ApiServices {
 
   @GET(AppEndpoint.movieList)
   Future<MoviesListDto> getMoviesList({
-    @Query('page') int page = 1,
-    @Query('genre') String? genre,
+    @Query(AppEndpoint.page) int page = 1,
+    @Query(AppEndpoint.genre) String? genre,
+    @Query(AppEndpoint.search) String? query,
+  });
+
+  @GET(AppEndpoint.movieDetails)
+  Future<MovieDetailsDto> getMoviesDetails({
+    @Query(AppEndpoint.movieId) int? movieId,
+    @Query(AppEndpoint.withCast) bool withCast = true,
+    @Query(AppEndpoint.withImage) bool withImages = true,
+  });
+
+  @GET(AppEndpoint.suggestions)
+  Future<MovieSuggestionsDto> getMovieSuggestions({
+    @Query(AppEndpoint.movieId) int? movieId,
   });
 }
