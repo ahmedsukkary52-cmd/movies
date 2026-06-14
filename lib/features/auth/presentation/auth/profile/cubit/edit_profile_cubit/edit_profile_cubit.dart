@@ -28,12 +28,24 @@ class EditProfileCubit extends Cubit<EditProfileStates> {
     }
   }
 
-  Future<void> deleteAccount({required String userId}) async {
+  Future<void> deleteAccount(
+      {required String userId, required String password}) async {
     emit(EditProfileLoading());
     try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      final credential = EmailAuthProvider.credential(
+        email: user.email!,
+        password: password,
+      );
+      await user.reauthenticateWithCredential(credential);
       await FirebaseFirestore.instance.collection('users').doc(userId).delete();
-      await FirebaseAuth.instance.currentUser?.delete();
+      await user.delete();
+
       emit(DeleteAccountSuccess());
+    } on FirebaseAuthException catch (e) {
+      emit(EditProfileError(message: e.message ?? 'Failed to delete account'));
     } catch (e) {
       emit(EditProfileError(message: e.toString()));
     }

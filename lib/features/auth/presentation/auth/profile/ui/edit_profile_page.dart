@@ -189,22 +189,40 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   void _showDeleteDialog() {
+    final passwordController = TextEditingController();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: ColorApp.grayColor,
         title: Text('Delete Account', style: TextApp.bold24White),
-        content: Text('Are you sure?', style: TextApp.regular16White),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Enter your password to confirm',
+                style: TextApp.regular16White),
+            SizedBox(height: 12.h),
+            TextField(
+              controller: passwordController,
+              obscureText: true,
+              style: TextApp.regular16White,
+            ),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Cancel', style: TextApp.regular16Wallow),
+            child: Text('Cancel', style: TextApp.regular20Wallow),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               final user = FirebaseAuth.instance.currentUser;
-              if (user != null) cubit.deleteAccount(userId: user.uid);
+              if (user != null) {
+                cubit.deleteAccount(
+                  userId: user.uid,
+                  password: passwordController.text,
+                );
+              }
             },
             child: Text('Delete', style: TextApp.regular20White),
           ),

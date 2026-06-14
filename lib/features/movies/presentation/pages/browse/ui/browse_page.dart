@@ -16,7 +16,7 @@ import '../../bottom_nav/cubit/bottom_nav_cubit.dart';
 import '../../bottom_nav/cubit/bottom_nav_state.dart';
 
 class BrowsePage extends StatefulWidget {
-  const BrowsePage({super.key,});
+  const BrowsePage({super.key});
 
   @override
   State<BrowsePage> createState() => _BrowsePageState();
@@ -27,6 +27,7 @@ class _BrowsePageState extends State<BrowsePage> {
   ScrollController _scrollController = ScrollController();
   String? _lastGenre;
   bool _isFetching = false;
+
   final List<String> genres = [
     'Action',
     'Comedy',
@@ -34,6 +35,17 @@ class _BrowsePageState extends State<BrowsePage> {
     'Drama',
     'Romance',
   ];
+
+  List<String> get _orderedGenres {
+    final selected = cubit.state is SuccessBrowse
+        ? (cubit.state as SuccessBrowse).selectedGenre
+        : 'Action';
+
+    final list = List<String>.from(genres);
+    list.remove(selected);
+    list.insert(0, selected);
+    return list;
+  }
 
   @override
   void initState() {
@@ -46,7 +58,8 @@ class _BrowsePageState extends State<BrowsePage> {
         final currentState = cubit.state;
         if (currentState is SuccessBrowse) {
           _isFetching = true;
-          cubit.getMoviesByGenre(currentState.selectedGenre, isLoadMore: true)
+          cubit
+              .getMoviesByGenre(currentState.selectedGenre, isLoadMore: true)
               .then((_) => _isFetching = false);
         }
       }
@@ -56,93 +69,95 @@ class _BrowsePageState extends State<BrowsePage> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<BottomNavCubit, BottomNavStates>(
-        listener: (context, navState) {
-          if (navState.selectedGenre != null &&
-              navState.selectedGenre != _lastGenre) {
-            _lastGenre = navState.selectedGenre;
-            cubit.getMoviesByGenre(navState.selectedGenre!);
-          }
-        },
-        child: Scaffold(
-          body: BlocBuilder<BrowseCubit, BrowseStates>(
-            bloc: cubit,
-            builder: (context, state) {
-              if (state is LoadingBrowse) {
-                return const GridShimmer();
-              }
-              if (state is ErrorBrowse) {
-                return AppErrorWidget(
-                  message: state.message,
-                  onRetry: () => cubit.getMoviesByGenre('Action'),
-                );
-              }
-              if (state is SuccessBrowse) {
-                return SafeArea(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w,),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: 80.h,
-                          child: ListView.separated(
-                            padding: EdgeInsets.only(top: 20.h),
-                            separatorBuilder: (context, index) =>
-                                SizedBox(width: 12.w,),
-                            scrollDirection: Axis.horizontal,
-                            itemCount: genres.length,
-                            itemBuilder: (context, index) {
-                              final genre = genres[index];
-                              return GenreWidget(
-                                isSelected: genre == state.selectedGenre,
-                                genreName: genre,
-                                onTap: () => cubit.getMoviesByGenre(genre),
-                              );
-                            },
-                          ),
+      listener: (context, navState) {
+        if (navState.selectedGenre != null &&
+            navState.selectedGenre != _lastGenre) {
+          _lastGenre = navState.selectedGenre;
+          cubit.getMoviesByGenre(navState.selectedGenre!);
+        }
+      },
+      child: Scaffold(
+        body: BlocBuilder<BrowseCubit, BrowseStates>(
+          bloc: cubit,
+          builder: (context, state) {
+            if (state is LoadingBrowse) {
+              return const GridShimmer();
+            }
+            if (state is ErrorBrowse) {
+              return AppErrorWidget(
+                message: state.message,
+                onRetry: () => cubit.getMoviesByGenre('Action'),
+              );
+            }
+            if (state is SuccessBrowse) {
+              return SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 80.h,
+                        child: ListView.separated(
+                          padding: EdgeInsets.only(top: 20.h),
+                          separatorBuilder: (context, index) =>
+                              SizedBox(width: 12.w),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _orderedGenres.length,
+                          itemBuilder: (context, index) {
+                            final genre = _orderedGenres[index];
+                            return GenreWidget(
+                              isSelected: genre == state.selectedGenre,
+                              genreName: genre,
+                              onTap: () => cubit.getMoviesByGenre(genre),
+                            );
+                          },
                         ),
-                        Expanded(
-                          child: Stack(
-                            children: [
-                              GridView.builder(
-                                padding: EdgeInsets.only(top: 30.h),
-                                controller: _scrollController,
-                                gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  mainAxisSpacing: 20.w,
-                                  mainAxisExtent: 260.h,
-                                  crossAxisSpacing: 20.w,
-                                ),
-                                itemCount: state.movies.length,
-                                itemBuilder: (context, index) {
-                                  return MovieItem(
-                                    movie: state.movies[index],
-                                    isSmall: true,
-                                  );
-                                },
-                              ),
-                              ClipRect(
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                      sigmaX: 15, sigmaY: 15),
-                                  child: Container(
-                                    height: 20.h,
-                                    color: ColorApp.black.withOpacity(.9),
+                      ),
+                      Expanded(
+                        child: Stack(
+                          children: [
+                            GridView.builder(
+                              padding: EdgeInsets.only(top: 30.h),
+                              controller: _scrollController,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    mainAxisSpacing: 20.w,
+                                    mainAxisExtent: 260.h,
+                                    crossAxisSpacing: 20.w,
                                   ),
+                              itemCount: state.movies.length,
+                              itemBuilder: (context, index) {
+                                return MovieItem(
+                                  movie: state.movies[index],
+                                  isSmall: true,
+                                );
+                              },
+                            ),
+                            ClipRect(
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(
+                                  sigmaX: 15,
+                                  sigmaY: 15,
+                                ),
+                                child: Container(
+                                  height: 20.h,
+                                  color: ColorApp.black.withOpacity(.9),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                );
-              }
-              return const SizedBox();
-            },
-          ),
-        )
+                ),
+              );
+            }
+            return const SizedBox();
+          },
+        ),
+      ),
     );
   }
 }
