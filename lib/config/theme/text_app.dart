@@ -29,6 +29,11 @@ class TextApp {
     fontWeight: FontWeight.normal,
     color: ColorApp.primary,
   );
+  static final TextStyle regular20Wallow = GoogleFonts.roboto(
+    fontSize: 20,
+    fontWeight: FontWeight.normal,
+    color: ColorApp.primary,
+  );
 
   static final TextStyle regular20BlackRoboto = GoogleFonts.roboto(
     fontSize: 20,

@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:moives/config/theme/color_app.dart';
@@ -58,12 +59,17 @@ class HomeShimmer extends StatelessWidget {
           SizedBox(height: 130.h),
           SizedBox(
             height: 352.h,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 5,
-              itemBuilder: (context, index) => Padding(
-                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                child: MovieItemShimmer(isSmall: false),
+            child: CarouselSlider.builder(
+              itemCount: 6,
+              itemBuilder: (context, index, realIndex) {
+                return MovieItemShimmer(isSmall: false);
+              },
+              options: CarouselOptions(
+                height: 352.h,
+                enlargeCenterPage: true,
+                viewportFraction: .58,
+                enlargeStrategy: CenterPageEnlargeStrategy.height,
+                enlargeFactor: .4,
               ),
             ),
           ),
