@@ -48,6 +48,12 @@ class _BrowsePageState extends State<BrowsePage> {
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     cubit.getMoviesByGenre('Action');
@@ -90,6 +96,13 @@ class _BrowsePageState extends State<BrowsePage> {
               );
             }
             if (state is SuccessBrowse) {
+              final orderedGenres = _orderedGenres;
+              final gridDelegate = SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 20.w,
+                mainAxisExtent: 260.h,
+                crossAxisSpacing: 20.w,
+              );
               return SafeArea(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -102,9 +115,9 @@ class _BrowsePageState extends State<BrowsePage> {
                           separatorBuilder: (context, index) =>
                               SizedBox(width: 12.w),
                           scrollDirection: Axis.horizontal,
-                          itemCount: _orderedGenres.length,
+                          itemCount: orderedGenres.length,
                           itemBuilder: (context, index) {
-                            final genre = _orderedGenres[index];
+                            final genre = orderedGenres[index];
                             return GenreWidget(
                               isSelected: genre == state.selectedGenre,
                               genreName: genre,
@@ -119,13 +132,7 @@ class _BrowsePageState extends State<BrowsePage> {
                             GridView.builder(
                               padding: EdgeInsets.only(top: 30.h),
                               controller: _scrollController,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    mainAxisSpacing: 20.w,
-                                    mainAxisExtent: 260.h,
-                                    crossAxisSpacing: 20.w,
-                                  ),
+                              gridDelegate: gridDelegate,
                               itemCount: state.movies.length,
                               itemBuilder: (context, index) {
                                 return MovieItem(

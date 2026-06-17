@@ -15,35 +15,14 @@ class HomeCubit extends Cubit<HomeStates> {
   List<Movie> _movies = [];
 
   bool get hasMore => _hasMore;
-
   bool get isLoadingMore => _isLoadingMore;
-  final List<String> _genres = [
-    'Action',
-    'Comedy',
-    'Horror',
-    'Drama',
-    'Romance',
-  ];
-  Map<String, List<Movie>> _moviesByGenre = {};
 
-  Future<void> getMoviesByGenre() async {
-    final shuffled = List.of(_genres)..shuffle();
-    final selected = shuffled.take(3).toList();
-    _moviesByGenre = {};
-
-    for (var genre in selected) {
-      final response = await getMovieUseCase(MovieParams(genre: genre));
-      response.fold((failure) => null, (moviesList) {
-        _moviesByGenre[genre] = moviesList.data?.movies ?? [];
-      });
-    }
-    emit(
-      HomeSuccess(
-        movie: _movies,
-        moviesByGenre: _moviesByGenre,
-        isLoadingGenre: false,
-      ),
-    );
+  void handlePagination(int index) {
+    final state = this.state;
+    if (state is! HomeSuccess) return;
+    final shouldLoadMore =
+        index >= state.movie.length - 3 && !state.isLoadingMore;
+    if (shouldLoadMore) getMoviesList(isLoadMore: true);
   }
 
   Future<void> getMoviesList({bool isLoadMore = false}) async {
@@ -53,7 +32,6 @@ class HomeCubit extends Cubit<HomeStates> {
       _currentPage = 1;
       _hasMore = true;
       _movies = [];
-      _moviesByGenre = {};
       emit(HomeLoading());
     } else {
       _isLoadingMore = true;
@@ -66,7 +44,7 @@ class HomeCubit extends Cubit<HomeStates> {
         _isLoadingMore = false;
         emit(HomeError(message: failure.message));
       },
-      (moviesList) async {
+      (moviesList) {
         final newMovies = moviesList.data?.movies ?? [];
         if (newMovies.isEmpty) {
           _hasMore = false;
@@ -75,8 +53,7 @@ class HomeCubit extends Cubit<HomeStates> {
           _currentPage++;
         }
         _isLoadingMore = false;
-        emit(HomeSuccess(movie: _movies, moviesByGenre: _moviesByGenre));
-        if (!isLoadMore) await getMoviesByGenre();
+        emit(HomeSuccess(movie: _movies));
       },
     );
   }

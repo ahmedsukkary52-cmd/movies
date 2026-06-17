@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:moives/config/theme/color_app.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../../config/theme/path_image.dart';
+
 class ShimmerWidget extends StatelessWidget {
   final double width;
   final double height;
@@ -48,57 +50,101 @@ class MovieItemShimmer extends StatelessWidget {
   }
 }
 
+class GenreSectionShimmer extends StatelessWidget {
+  const GenreSectionShimmer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ...List.generate(
+          3,
+          (index) => Padding(
+            padding: EdgeInsets.only(left: 16.w, bottom: 24.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ShimmerWidget(width: 100.w, height: 20.h),
+                SizedBox(height: 12.h),
+                SizedBox(
+                  height: 220.h,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 4,
+                    itemBuilder: (context, index) => Padding(
+                      padding: EdgeInsets.only(right: 12.w),
+                      child: MovieItemShimmer(isSmall: true),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class HomeShimmer extends StatelessWidget {
   const HomeShimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(height: 130.h),
-          SizedBox(
-            height: 352.h,
-            child: CarouselSlider.builder(
-              itemCount: 6,
-              itemBuilder: (context, index, realIndex) {
-                return MovieItemShimmer(isSmall: false);
-              },
-              options: CarouselOptions(
-                height: 352.h,
-                enlargeCenterPage: true,
-                viewportFraction: .58,
-                enlargeStrategy: CenterPageEnlargeStrategy.height,
-                enlargeFactor: .4,
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage(PathImage.homeBg),
+          alignment: Alignment.topCenter,
+        ),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: 130.h),
+            SizedBox(
+              height: 352.h,
+              child: CarouselSlider.builder(
+                itemCount: 3,
+                itemBuilder: (context, index, realIndex) {
+                  return MovieItemShimmer(isSmall: false);
+                },
+                options: CarouselOptions(
+                  height: 352.h,
+                  enlargeCenterPage: true,
+                  viewportFraction: .58,
+                  enlargeStrategy: CenterPageEnlargeStrategy.height,
+                  enlargeFactor: .4,
+                ),
               ),
             ),
-          ),
-          SizedBox(height: 24.h),
-          ...List.generate(
-            3,
-            (index) => Padding(
-              padding: EdgeInsets.only(left: 16.w, bottom: 24.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ShimmerWidget(width: 100.w, height: 20.h),
-                  SizedBox(height: 12.h),
-                  SizedBox(
-                    height: 220.h,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 4,
-                      itemBuilder: (context, index) => Padding(
-                        padding: EdgeInsets.only(right: 12.w),
-                        child: MovieItemShimmer(isSmall: true),
+            SizedBox(height: 150.h),
+            ...List.generate(
+              3,
+              (index) => Padding(
+                padding: EdgeInsets.only(left: 16.w, bottom: 24.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ShimmerWidget(width: 100.w, height: 20.h),
+                    SizedBox(height: 12.h),
+                    SizedBox(
+                      height: 220.h,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: 4,
+                        itemBuilder: (context, index) => Padding(
+                          padding: EdgeInsets.only(right: 12.w),
+                          child: MovieItemShimmer(isSmall: true),
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

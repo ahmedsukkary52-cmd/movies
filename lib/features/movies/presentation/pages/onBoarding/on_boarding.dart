@@ -19,7 +19,7 @@ class OnboardingScreens extends StatefulWidget {
 }
 
 class _OnboardingScreensState extends State<OnboardingScreens> {
-  final List<String> allWords = [
+  static const List<String> allWords = [
     "Explore Now",
     "Find Your Next Favorite Movie Here",
     'Get access to a huge library of movies to suit all tastes. You will surely like it.',

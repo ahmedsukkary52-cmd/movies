@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -119,11 +120,11 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                     background: Stack(
                       fit: StackFit.expand,
                       children: [
-                        Image.network(
-                          movie?.largeCoverImage ?? '',
+                        CachedNetworkImage(
+                          imageUrl: movie?.largeCoverImage ?? '',
                           fit: BoxFit.cover,
                         ),
-                        Container(
+                        DecoratedBox(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               begin: Alignment.bottomCenter,
@@ -169,144 +170,143 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                 ),
 
                 SliverToBoxAdapter(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16.w),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomElevatedButton(
-                                textStyle: TextApp.bold20White,
-                                background: ColorApp.redColor,
-                                text: 'Watch',
-                                onPressed: () {
-                                  cubit.watchMovie(movie?.url ?? '');
-                                },
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomElevatedButton(
+                              textStyle: TextApp.bold20White,
+                              background: ColorApp.redColor,
+                              text: 'Watch',
+                              onPressed: () {
+                                cubit.watchMovie(movie?.url ?? '');
+                              },
+                            ),
+                            SizedBox(height: 16.h),
+                            Row(
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                              children: [
+                                DetailsWidget(
+                                  icon: PathImage.favorite,
+                                  number: movie?.likeCount ?? 0,
+                                ),
+                                DetailsWidget(
+                                  icon: PathImage.clock,
+                                  number: movie?.runtime ?? 0,
+                                ),
+                                DetailsWidget(
+                                  icon: PathImage.starRate,
+                                  number: movie?.rating ?? 0,
+                                ),
+                              ],
+                            ),
+                            sectionItem('Screen Shots'),
+                            state.screenShots.isEmpty
+                                ? Text(
+                              "No Screen Shots Available",
+                              style: TextApp.regular16White,
+                            )
+                                : ListView.separated(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              padding: EdgeInsets.zero,
+                              itemBuilder: (_, __) =>
+                                  ScreenShotsItem(
+                                    screenShotImage: state.screenShots[__],
+                                  ),
+                              separatorBuilder: (_, __) =>
+                                  SizedBox(height: 12.h),
+                              itemCount: state.screenShots.length,
+                            ),
+                            sectionItem('Similar'),
+                            state.suggestions.isEmpty
+                                ? Text(
+                              'No Similar Movies Available',
+                              style: TextApp.regular16White,
+                            )
+                                : GridView.builder(
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 20.w,
+                                mainAxisExtent: 260.h,
+                                crossAxisSpacing: 20.w,
                               ),
-                              SizedBox(height: 16.h),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  DetailsWidget(
-                                    icon: PathImage.favorite,
-                                    number: movie?.likeCount ?? 0,
-                                  ),
-                                  DetailsWidget(
-                                    icon: PathImage.clock,
-                                    number: movie?.runtime ?? 0,
-                                  ),
-                                  DetailsWidget(
-                                    icon: PathImage.starRate,
-                                    number: movie?.rating ?? 0,
-                                  ),
-                                ],
+                              itemCount: state.suggestions.length,
+                              itemBuilder: (context, index) {
+                                return MovieItem(
+                                  movie: state.suggestions[index],
+                                  isSmall: true,
+                                );
+                              },
+                            ),
+                            sectionItem('Summary'),
+                            movie?.descriptionFull == null ||
+                                movie?.descriptionFull == ""
+                                ? Text('No Summary Available')
+                                : Text(
+                              movie?.descriptionFull ?? '',
+                              style: TextApp.regular16White,
+                            ),
+                            sectionItem('Cast'),
+                            castList.isEmpty
+                                ? Text(
+                              'No Cast Available',
+                              style: TextApp.regular16White,
+                            )
+                                : ListView.separated(
+                              physics: NeverScrollableScrollPhysics(),
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              itemBuilder: (_, __) {
+                                final cast = castList[__];
+                                return CastItem(
+                                  castImage: cast.urlSmallImage ?? '',
+                                  castCharacter:
+                                  cast.characterName ??
+                                      'No Character Name Available',
+                                  castName:
+                                  cast.name ?? 'No Name Available',
+                                );
+                              },
+                              separatorBuilder: (_, _) =>
+                                  SizedBox(height: 12.h),
+                              itemCount: castList.length,
+                            ),
+                            sectionItem('Genres'),
+                            genresList.isEmpty
+                                ? Text(
+                              'No Genre Available',
+                              style: TextApp.regular16White,
+                            )
+                                : GridView.builder(
+                              gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                mainAxisExtent: 50.h,
+                                mainAxisSpacing: 16.w,
+                                crossAxisSpacing: 16.w,
                               ),
-                              sectionItem('Screen Shots'),
-                              state.screenShots.isEmpty
-                                  ? Text(
-                                      "No Screen Shots Available",
-                                      style: TextApp.regular16White,
-                                    )
-                                  : ListView.separated(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      padding: EdgeInsets.zero,
-                                      itemBuilder: (_, __) => ScreenShotsItem(
-                                        screenShotImage: state.screenShots[__],
-                                      ),
-                                      separatorBuilder: (_, __) =>
-                                          SizedBox(height: 12.h),
-                                      itemCount: state.screenShots.length,
-                                    ),
-                              sectionItem('Similar'),
-                              state.suggestions.isEmpty
-                                  ? Text(
-                                      'No Similar Movies Available',
-                                      style: TextApp.regular16White,
-                                    )
-                                  : GridView.builder(
-                                      padding: EdgeInsets.zero,
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 2,
-                                            mainAxisSpacing: 20.w,
-                                            mainAxisExtent: 260.h,
-                                            crossAxisSpacing: 20.w,
-                                          ),
-                                      itemCount: state.suggestions.length,
-                                      itemBuilder: (context, index) {
-                                        return MovieItem(
-                                          movie: state.suggestions[index],
-                                          isSmall: true,
-                                        );
-                                      },
-                                    ),
-                              sectionItem('Summary'),
-                              movie?.descriptionFull == null ||
-                                      movie?.descriptionFull == ""
-                                  ? Text('No Summary Available')
-                                  : Text(
-                                      movie?.descriptionFull ?? '',
-                                      style: TextApp.regular16White,
-                                    ),
-                              sectionItem('Cast'),
-                              castList.isEmpty
-                                  ? Text(
-                                      'No Cast Available',
-                                      style: TextApp.regular16White,
-                                    )
-                                  : ListView.separated(
-                                      physics: NeverScrollableScrollPhysics(),
-                                      padding: EdgeInsets.zero,
-                                      shrinkWrap: true,
-                                      itemBuilder: (_, __) {
-                                        final cast = castList[__];
-                                        return CastItem(
-                                          castImage: cast.urlSmallImage ?? '',
-                                          castCharacter:
-                                              cast.characterName ??
-                                              'No Character Name Available',
-                                          castName:
-                                              cast.name ?? 'No Name Available',
-                                        );
-                                      },
-                                      separatorBuilder: (_, _) =>
-                                          SizedBox(height: 12.h),
-                                      itemCount: castList.length,
-                                    ),
-                              sectionItem('Genres'),
-                              genresList.isEmpty
-                                  ? Text(
-                                      'No Genre Available',
-                                      style: TextApp.regular16White,
-                                    )
-                                  : GridView.builder(
-                                      gridDelegate:
-                                          SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: 3,
-                                            mainAxisExtent: 50.h,
-                                            mainAxisSpacing: 16.w,
-                                            crossAxisSpacing: 16.w,
-                                          ),
-                                      shrinkWrap: true,
-                                      padding: EdgeInsets.zero,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount: genresList.length,
-                                      itemBuilder: (_, __) {
-                                        return GenreItem(genre: genresList[__]);
-                                      },
-                                    ),
-                              SizedBox(height: 50.h),
-                            ],
-                          ),
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: genresList.length,
+                              itemBuilder: (_, __) {
+                                return GenreItem(genre: genresList[__]);
+                              },
+                            ),
+                            SizedBox(height: 50.h),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ],
