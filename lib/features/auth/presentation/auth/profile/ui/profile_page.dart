@@ -96,15 +96,13 @@ class _ProfilePageState extends State<ProfilePage>
             );
           }
           if (state is ProfileSuccess) {
+            final h = MediaQuery.of(context).size.height;
             return NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
                 SliverAppBar(
                   pinned: true,
                   toolbarHeight: 0,
-                  expandedHeight: MediaQuery
-                      .of(context)
-                      .size
-                      .height * .40,
+                  expandedHeight: h > 900 ? 380.h : 420.h,
                   backgroundColor: ColorApp.grayColor,
                   flexibleSpace: FlexibleSpaceBar(
                     background: Padding(
@@ -121,16 +119,20 @@ class _ProfilePageState extends State<ProfilePage>
                                 children: [
                                   state.user.photoUrl != null
                                       ? CachedNetworkImage(
-                                    imageUrl: state.user.photoUrl!,
-                                    width: 118.w,
-                                    fit: BoxFit.cover,
-                                    memCacheWidth: 300,
-                                    placeholder: (context, url) =>
-                                    const CircularProgressIndicator(
-                                        strokeWidth: 1),
-                                    errorWidget: (context, url, error) =>
-                                        Image.asset(PathImage.g1, width: 118.w),
-                                  )
+                                          imageUrl: state.user.photoUrl!,
+                                          width: 118.w,
+                                          fit: BoxFit.cover,
+                                          memCacheWidth: 300,
+                                          placeholder: (context, url) =>
+                                              const CircularProgressIndicator(
+                                                strokeWidth: 1,
+                                              ),
+                                          errorWidget: (context, url, error) =>
+                                              Image.asset(
+                                                PathImage.g1,
+                                                width: 118.w,
+                                              ),
+                                        )
                                       : Image.asset(PathImage.g1, width: 118.w),
                                   SizedBox(height: 12.h),
                                   SizedBox(
@@ -233,7 +235,7 @@ class _ProfilePageState extends State<ProfilePage>
                           size: 40.w,
                         ),
                         text: 'Watch List',
-                        height: 100,
+                        height: 100.h,
                       ),
                       Tab(
                         icon: Icon(Icons.folder, size: 40.w),
@@ -253,12 +255,12 @@ class _ProfilePageState extends State<ProfilePage>
                           child: Image.asset(PathImage.empty, height: 124.h),
                         )
                       : GridView.builder(
-                    padding: EdgeInsets.only(
-                      left: 16.w,
-                      right: 16.w,
-                      top: 16.h,
-                      bottom: 120.h,
-                    ),
+                          padding: EdgeInsets.only(
+                            left: 16.w,
+                            right: 16.w,
+                            top: 16.h,
+                            bottom: 120.h,
+                          ),
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3,
@@ -279,13 +281,13 @@ class _ProfilePageState extends State<ProfilePage>
                           child: Image.asset(PathImage.empty, height: 124.h),
                         )
                       : GridView.builder(
-                    padding: EdgeInsets.only(
-                      left: 16.w,
-                      right: 16.w,
-                      top: 16.h,
-                      bottom: 120.h,
-                    ),
-                    addRepaintBoundaries: true,
+                          padding: EdgeInsets.only(
+                            left: 16.w,
+                            right: 16.w,
+                            top: 16.h,
+                            bottom: 120.h,
+                          ),
+                          addRepaintBoundaries: true,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3,
