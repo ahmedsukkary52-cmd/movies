@@ -15,7 +15,7 @@ import '../../../../../auth/presentation/auth/profile/cubit/profile_cubit/profil
 import '../../../../../auth/presentation/auth/profile/ui/profile_page.dart';
 import '../../browse/cubit/browse_cubit.dart';
 import '../../browse/ui/browse_page.dart';
-import '../../home/cubit/view_model.dart';
+import '../../home/cubit/home_cubit.dart';
 import '../../search/cubit/search_cubit.dart';
 import '../../search/ui/search_page.dart';
 import '../widget/custom_bottom_nav.dart';
@@ -52,7 +52,7 @@ class _MainScreenBottomNavState extends State<MainScreenBottomNav> {
     super.dispose();
   }
 
-  final List<Widget> screens = [
+  final List<Widget> screens = const [
     HomePage(),
     SearchPage(),
     BrowsePage(),

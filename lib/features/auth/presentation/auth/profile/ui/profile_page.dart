@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -29,34 +30,41 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   ProfileCubit cubit = getIt<ProfileCubit>();
   AuthCubit authCubit = getIt<AuthCubit>();
   late TabController _tabController;
+
+  Future<void> _fetchUserData() async {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    if (firebaseUser == null) return;
+
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(firebaseUser.uid)
+        .get();
+
+    if (!doc.exists) return;
+
+    cubit.getProfile(
+      UserEntity(
+        id: firebaseUser.uid,
+        email: firebaseUser.email!,
+        name: doc.data()?['name'],
+        photoUrl: doc.data()?['avatar'],
+        phone: doc.data()?['phone'],
+      ),
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    final firebaseUser = FirebaseAuth.instance.currentUser;
-    if (firebaseUser != null) {
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(firebaseUser.uid)
-          .get()
-          .then((doc) {
-            if (doc.exists) {
-              cubit.getProfile(
-                UserEntity(
-                  id: firebaseUser.uid,
-                  email: firebaseUser.email!,
-                  name: doc.data()?['name'],
-                  photoUrl: doc.data()?['avatar'],
-                  phone: doc.data()?['phone'],
-                ),
-              );
-            }
-          });
-    }
+    _fetchUserData();
   }
 
   @override
@@ -67,32 +75,20 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocListener<EditProfileCubit, EditProfileStates>(
       bloc: getIt<EditProfileCubit>(),
+      listenWhen: (previous, current) => current is EditProfileSuccess,
       listener: (context, state) async {
-        if (state is EditProfileSuccess) {
-          final firebaseUser = FirebaseAuth.instance.currentUser;
-          if (firebaseUser != null) {
-            final doc = await FirebaseFirestore.instance
-                .collection('users')
-                .doc(firebaseUser.uid)
-                .get();
-            if (doc.exists) {
-              cubit.getProfile(
-                UserEntity(
-                  id: firebaseUser.uid,
-                  email: firebaseUser.email!,
-                  name: doc.data()?['name'],
-                  photoUrl: doc.data()?['avatar'],
-                  phone: doc.data()?['phone'],
-                ),
-              );
-            }
-          }
-        }
+        _fetchUserData();
       },
       child: BlocBuilder<ProfileCubit, ProfileStates>(
         bloc: cubit,
+        buildWhen: (previous, current) {
+          return current is ProfileSuccess ||
+              current is ProfileError ||
+              current is ProfileLoading;
+        },
         builder: (context, state) {
           if (state is ProfileError) {
             return Center(
@@ -105,7 +101,10 @@ class _ProfilePageState extends State<ProfilePage>
                 SliverAppBar(
                   pinned: true,
                   toolbarHeight: 0,
-                  expandedHeight: MediaQuery.of(context).size.height * .45,
+                  expandedHeight: MediaQuery
+                      .of(context)
+                      .size
+                      .height * .40,
                   backgroundColor: ColorApp.grayColor,
                   flexibleSpace: FlexibleSpaceBar(
                     background: Padding(
@@ -121,10 +120,17 @@ class _ProfilePageState extends State<ProfilePage>
                               Column(
                                 children: [
                                   state.user.photoUrl != null
-                                      ? Image.asset(
-                                          state.user.photoUrl!,
-                                          width: 118.w,
-                                        )
+                                      ? CachedNetworkImage(
+                                    imageUrl: state.user.photoUrl!,
+                                    width: 118.w,
+                                    fit: BoxFit.cover,
+                                    memCacheWidth: 300,
+                                    placeholder: (context, url) =>
+                                    const CircularProgressIndicator(
+                                        strokeWidth: 1),
+                                    errorWidget: (context, url, error) =>
+                                        Image.asset(PathImage.g1, width: 118.w),
+                                  )
                                       : Image.asset(PathImage.g1, width: 118.w),
                                   SizedBox(height: 12.h),
                                   SizedBox(
@@ -146,14 +152,14 @@ class _ProfilePageState extends State<ProfilePage>
                                   SizedBox(height: 8.h),
                                   Row(
                                     children: [
-                                      _statWidget(
-                                        '${state.watchlistCount}',
-                                        'Wish List',
+                                      _StatWidget(
+                                        count: '${state.watchlistCount}',
+                                        label: 'Wish List',
                                       ),
                                       SizedBox(width: 24.w),
-                                      _statWidget(
-                                        '${state.historyCount}',
-                                        'History',
+                                      _StatWidget(
+                                        count: '${state.historyCount}',
+                                        label: 'History',
                                       ),
                                     ],
                                   ),
@@ -248,7 +254,11 @@ class _ProfilePageState extends State<ProfilePage>
                         )
                       : GridView.builder(
                     padding: EdgeInsets.only(
-                        left: 16.w, right: 16.w, top: 16.h, bottom: 120.h),
+                      left: 16.w,
+                      right: 16.w,
+                      top: 16.h,
+                      bottom: 120.h,
+                    ),
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3,
@@ -270,7 +280,12 @@ class _ProfilePageState extends State<ProfilePage>
                         )
                       : GridView.builder(
                     padding: EdgeInsets.only(
-                        left: 16.w, right: 16.w, top: 16.h, bottom: 120.h),
+                      left: 16.w,
+                      right: 16.w,
+                      top: 16.h,
+                      bottom: 120.h,
+                    ),
+                    addRepaintBoundaries: true,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 3,
@@ -295,10 +310,17 @@ class _ProfilePageState extends State<ProfilePage>
       ),
     );
   }
+}
 
-  Widget _statWidget(String count, String label) {
+class _StatWidget extends StatelessWidget {
+  final String count;
+  final String label;
+
+  const _StatWidget({required this.count, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
-      spacing: 10.h,
       children: [
         Text(count, style: TextApp.bold36White),
         Text(label, style: TextApp.bold24White),

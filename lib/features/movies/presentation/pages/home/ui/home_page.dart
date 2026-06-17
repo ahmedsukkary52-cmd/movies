@@ -7,11 +7,13 @@ import 'package:moives/config/theme/path_image.dart';
 import 'package:moives/config/theme/text_app.dart';
 import 'package:moives/core/utils/widgets/movie_item.dart';
 import 'package:moives/core/utils/widgets/shimmer_widgets.dart';
+import 'package:moives/features/movies/presentation/pages/home/cubit/home_cubit.dart';
 import 'package:moives/features/movies/presentation/pages/home/cubit/states.dart';
-import 'package:moives/features/movies/presentation/pages/home/cubit/view_model.dart';
 
 import '../../../../../../core/utils/widgets/error_widget.dart';
 import '../../bottom_nav/cubit/bottom_nav_cubit.dart';
+import '../cubit/genre_section_cubit/genre_sections_cubit.dart';
+import '../cubit/genre_section_cubit/genre_state.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,16 +24,19 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   HomeCubit cubit = getIt<HomeCubit>();
+  GenreSectionsCubit genreCubit = getIt<GenreSectionsCubit>();
+
+  void _init() {
+    cubit.getMoviesList();
+    genreCubit.getMoviesByGenre();
+  }
 
   @override
   void initState() {
     super.initState();
-    init();
-  }
-
-  Future<void> init() async {
-    await cubit.getMoviesList();
-    await cubit.getMoviesByGenre();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _init();
+    });
   }
 
   @override
@@ -39,6 +44,8 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       body: BlocBuilder<HomeCubit, HomeStates>(
         bloc: cubit,
+        buildWhen: (prev, curr) =>
+        curr is HomeLoading || curr is HomeSuccess || curr is HomeError,
         builder: (context, state) {
           if (state is HomeLoading) {
             return const HomeShimmer();
@@ -48,11 +55,12 @@ class _HomePageState extends State<HomePage> {
               message: state.message,
               onRetry: () {
                 cubit.getMoviesList();
+                genreCubit.getMoviesByGenre();
               },
             );
           }
           if (state is HomeSuccess) {
-            return Container(
+            return DecoratedBox(
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(PathImage.homeBg),
@@ -73,69 +81,82 @@ class _HomePageState extends State<HomePage> {
                         },
                         options: CarouselOptions(
                           height: 352.h,
+                          pauseAutoPlayOnTouch: true,
                           enlargeCenterPage: true,
+                          pageSnapping: true,
                           viewportFraction: .58,
                           enlargeStrategy: CenterPageEnlargeStrategy.height,
                           enlargeFactor: .4,
                           autoPlay: true,
                           onPageChanged: (index, reason) {
-                            if (index >= state.movie.length - 3 &&
-                                !state.isLoadingMore) {
-                              cubit.getMoviesList(isLoadMore: true);
-                            }
+                            cubit.handlePagination(index);
                           },
                         ),
                       ),
                       SizedBox(height: 150.h),
-                      if (state.isLoadingGenre)
-                        Center(child: CircularProgressIndicator())
-                      else
-                        ...state.moviesByGenre.entries.map((entry) {
-                          return Padding(
-                            padding: EdgeInsets.only(left: 16.w, bottom: 30.h),
-
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .spaceBetween,
-                                  children: [
-                                    Text(
-                                        entry.key,
-                                        style: TextApp.regular20White),
-                                    TextButton(onPressed: () {
-                                      context
-                                          .read<BottomNavCubit>()
-                                          .selectGenre(entry.key);
-                                      context.read<BottomNavCubit>().changeTab(
-                                          2);
-                                    },
-                                        child: Text('See More',
-                                            style: TextApp.regular16Wallow)),
-                                  ],
-                                ),
-                                SizedBox(height: 8.h),
-                                SizedBox(
-                                  height: 220.h,
-                                  child: ListView.separated(
-                                    padding: EdgeInsets.zero,
-                                    scrollDirection: Axis.horizontal,
-                                    separatorBuilder: (context, index) =>
-                                        SizedBox(width: 20.w),
-                                    itemCount: entry.value.length,
-                                    itemBuilder: (context, index) {
-                                      return MovieItem(
-                                        movie: entry.value[index],
-                                        isSmall: true,
-                                      );
-                                    },
+                      BlocBuilder<GenreSectionsCubit, GenreSectionsStates>(
+                        bloc: genreCubit,
+                        builder: (context, genreState) {
+                          if (genreState is GenreSectionsLoading) {
+                            return const GenreSectionShimmer();
+                          }
+                          if (genreState is GenreSectionsSuccess) {
+                            return Column(
+                              children: genreState.moviesByGenre.entries.map((
+                                  entry) {
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                      left: 16.w, bottom: 30.h),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment
+                                        .start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment
+                                            .spaceBetween,
+                                        children: [
+                                          Text(entry.key,
+                                              style: TextApp.regular20White),
+                                          TextButton(
+                                            onPressed: () {
+                                              context
+                                                  .read<BottomNavCubit>()
+                                                  .selectGenre(entry.key);
+                                              context
+                                                  .read<BottomNavCubit>()
+                                                  .changeTab(2);
+                                            },
+                                            child: Text('See More',
+                                                style: TextApp.regular16Wallow),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 8.h),
+                                      SizedBox(
+                                        height: 220.h,
+                                        child: ListView.separated(
+                                          padding: EdgeInsets.zero,
+                                          scrollDirection: Axis.horizontal,
+                                          separatorBuilder: (context, index) =>
+                                              SizedBox(width: 20.w),
+                                          itemCount: entry.value.length,
+                                          itemBuilder: (context, index) {
+                                            return MovieItem(
+                                              movie: entry.value[index],
+                                              isSmall: true,
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }),
+                                );
+                              }).toList(),
+                            );
+                          }
+                          return const SizedBox();
+                        },
+                      ),
                     ],
                   ),
                 ),

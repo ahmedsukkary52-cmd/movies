@@ -78,7 +78,9 @@ import '../../features/movies/presentation/pages/bottom_nav/cubit/bottom_nav_cub
     as _i175;
 import '../../features/movies/presentation/pages/browse/cubit/browse_cubit.dart'
     as _i981;
-import '../../features/movies/presentation/pages/home/cubit/view_model.dart'
+import '../../features/movies/presentation/pages/home/cubit/genre_section_cubit/genre_sections_cubit.dart'
+    as _i377;
+import '../../features/movies/presentation/pages/home/cubit/home_cubit.dart'
     as _i483;
 import '../../features/movies/presentation/pages/movie_details/cuibt/details_cubit.dart'
     as _i440;
@@ -212,6 +214,11 @@ extension GetItInjectableX on _i174.GetIt {
         isInWatchlistUseCase: gh<_i351.IsInWatchlistUseCase>(),
         addToHistoryUseCase: gh<_i665.AddToHistoryUseCase>(),
         movieDetailsUseCase: gh<_i376.MovieDetailsUseCase>(),
+      ),
+    );
+    gh.singleton<_i377.GenreSectionsCubit>(
+      () => _i377.GenreSectionsCubit(
+        getMovieUseCase: gh<_i207.GetMovieUseCase>(),
       ),
     );
     gh.singleton<_i483.HomeCubit>(
