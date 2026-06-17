@@ -152,7 +152,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 270.h),
+                        SizedBox(height: 250.h),
                         state is EditProfileLoading
                             ? CircularProgressIndicator()
                             : Column(

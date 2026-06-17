@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -117,23 +116,10 @@ class _ProfilePageState extends State<ProfilePage>
                             children: [
                               Column(
                                 children: [
-                                  state.user.photoUrl != null
-                                      ? CachedNetworkImage(
-                                          imageUrl: state.user.photoUrl!,
-                                          width: 118.w,
-                                          fit: BoxFit.cover,
-                                          memCacheWidth: 300,
-                                          placeholder: (context, url) =>
-                                              const CircularProgressIndicator(
-                                                strokeWidth: 1,
-                                              ),
-                                          errorWidget: (context, url, error) =>
-                                              Image.asset(
-                                                PathImage.g1,
-                                                width: 118.w,
-                                              ),
-                                        )
-                                      : Image.asset(PathImage.g1, width: 118.w),
+                                  Image.asset(
+                                    state.user.photoUrl ?? PathImage.g1,
+                                    width: 118.w,
+                                  ),
                                   SizedBox(height: 12.h),
                                   SizedBox(
                                     width: 120.w,
