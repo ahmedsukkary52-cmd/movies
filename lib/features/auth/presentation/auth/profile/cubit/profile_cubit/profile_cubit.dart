@@ -143,6 +143,9 @@ class ProfileCubit extends Cubit<ProfileStates> {
         await addToWatchlistUseCase(
           WatchlistParams(userId: _currentUser!.id, movieId: movieId),
         );
+        if (_currentUser != null) {
+          await getProfile(_currentUser!, forceRefresh: true);
+        }
       }
     });
   }
@@ -152,5 +155,6 @@ class ProfileCubit extends Cubit<ProfileStates> {
     await addToHistoryUseCase(
       WatchlistParams(userId: _currentUser!.id, movieId: movieId),
     );
+    await getProfile(_currentUser!, forceRefresh: true);
   }
 }

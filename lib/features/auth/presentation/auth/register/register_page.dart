@@ -46,12 +46,26 @@ class _RegisterPageState extends State<RegisterPage> {
   ];
 
   @override
+  void dispose() {
+    name.dispose();
+    email.dispose();
+    password.dispose();
+    confirmPassword.dispose();
+    phone.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthStates>(
       bloc: cubit,
+      listenWhen: (previous, current) =>
+      current is AuthSuccess || current is AuthError,
       listener: (context, state) {
         if (state is AuthSuccess) {
+          if (!mounted) return;
           context.go(AppRoutes.main);
+          ;
         } else if (state is AuthError) {
           ScaffoldMessenger.of(
             context,
@@ -77,7 +91,10 @@ class _RegisterPageState extends State<RegisterPage> {
           child: BlocBuilder<AuthCubit, AuthStates>(
             bloc: cubit,
             builder: (context, state) {
+              final pass = password.text;
               return SingleChildScrollView(
+                keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior
+                    .onDrag,
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -85,17 +102,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       CarouselSlider.builder(
                         itemCount: avatar.length,
                         itemBuilder: (context, index, realIndex) {
-                          return Image.asset(avatar[index]);
+                          return Image.asset(
+                            avatar[index],
+                            gaplessPlayback: true,
+                          );
                         },
                         options: CarouselOptions(
                           enlargeCenterPage: true,
                           viewportFraction: .38,
                           enlargeFactor: .5,
                           aspectRatio: 2,
+                          enableInfiniteScroll: false,
+                          pageSnapping: true,
                           onPageChanged: (index, reason) {
-                            setState(() {
-                              _selectedAvatarIndex = index;
-                            });
+                            if (_selectedAvatarIndex == index) return;
+                            setState(() => _selectedAvatarIndex = index);
                           },
                         ),
                       ),
@@ -132,7 +153,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               validator: (val) =>
                                   ValidatorsApp.validateConfirmPassword(
                                     val,
-                                    password.text,
+                                    pass,
                                   ),
                               obscureText: true,
                               prefixIconName: SvgPicture.asset(
@@ -146,10 +167,11 @@ class _RegisterPageState extends State<RegisterPage> {
                               validator: ValidatorsApp.validatePhoneNumber,
                               prefixIconName: SvgPicture.asset(PathImage.phone),
                               controller: phone,
-                              isNumber: true,
+                              keyboardType: TextInputType.visiblePassword,
                             ),
                             state is AuthLoading
-                                ? CircularProgressIndicator()
+                                ? Center(
+                                child: const CircularProgressIndicator())
                                 : CustomElevatedButton(
                                     text: 'Create Account',
                                     textStyle: TextApp.regular20BlackRoboto,

@@ -15,18 +15,39 @@ import '../../../../../config/di/di.dart';
 import '../cubit/auth_cubit.dart';
 import '../cubit/auth_states.dart';
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
-  final TextEditingController email = TextEditingController();
-  final TextEditingController password = TextEditingController();
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  late final TextEditingController email;
+  late final TextEditingController password;
   final AuthCubit cubit = getIt<AuthCubit>();
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    email = TextEditingController();
+    password = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    email.dispose();
+    password.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthStates>(
       bloc: cubit,
+      listenWhen: (prev, curr) =>
+          curr is AuthSuccess || curr is AuthError && prev != curr,
       listener: (context, state) {
         if (state is AuthSuccess) {
           context.go(AppRoutes.main);
@@ -40,6 +61,7 @@ class LoginPage extends StatelessWidget {
         body: SafeArea(
           child: BlocBuilder<AuthCubit, AuthStates>(
             bloc: cubit,
+            buildWhen: (prev, curr) => curr is AuthLoading,
             builder: (context, state) {
               return Form(
                 key: _formKey,
@@ -58,6 +80,7 @@ class LoginPage extends StatelessWidget {
                         prefixIconName: SvgPicture.asset(PathImage.email),
                         controller: email,
                         validator: ValidatorsApp.validateEmail,
+                        keyboardType: TextInputType.emailAddress,
                       ),
                       SizedBox(height: 22.h),
                       CustomTextField(
@@ -84,17 +107,18 @@ class LoginPage extends StatelessWidget {
                       ),
                       SizedBox(height: 32.h),
                       state is AuthLoading
-                          ? CircularProgressIndicator()
+                          ? const CircularProgressIndicator()
                           : CustomElevatedButton(
                               text: 'Login',
                               textStyle: TextApp.regular20BlackRoboto,
                               onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  cubit.login(
-                                    email: email.text,
-                                    password: password.text,
-                                  );
-                                }
+                                final isValid =
+                                    _formKey.currentState?.validate() ?? false;
+                                if (!isValid) return;
+                                cubit.login(
+                                  email: email.text.trim(),
+                                  password: password.text.trim(),
+                                );
                               },
                             ),
                       SizedBox(height: 22.h),

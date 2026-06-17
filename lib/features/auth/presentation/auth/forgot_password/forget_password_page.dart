@@ -37,6 +37,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _formKey = GlobalKey<FormState>();
 
   @override
+  void dispose() {
+    email.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthStates>(
       bloc: cubit,
@@ -44,7 +50,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         if (state is AuthForgotPasswordSuccess) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text('Reset email sent!')));
+          ).showSnackBar(const SnackBar(content: Text('Reset email sent!')));
           context.pop();
         } else if (state is AuthError) {
           ScaffoldMessenger.of(
@@ -74,7 +80,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               key: _formKey,
               child: Column(
                 children: [
-                  Image.asset(PathImage.forget, width: 430.w, height: 430.h),
+                  Image.asset(
+                    PathImage.forget,
+                    width: 430.w,
+                    height: 430.h,
+                    cacheWidth: 800,
+                  ),
                   SizedBox(height: 24.h),
                   CustomTextField(
                     hintText: 'Email',
@@ -87,7 +98,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     bloc: cubit,
                     builder: (context, state) {
                       return state is AuthLoading
-                          ? CircularProgressIndicator()
+                          ? const CircularProgressIndicator()
                           : CustomElevatedButton(
                               text: 'Verify Email',
                               textStyle: TextApp.regular20BlackRoboto,

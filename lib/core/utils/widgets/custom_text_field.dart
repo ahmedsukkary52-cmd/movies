@@ -12,8 +12,6 @@ class CustomTextField extends StatefulWidget {
   final Widget? prefixIconName;
   final bool hasSuffix;
   final bool obscureText;
-  final bool isNumber;
-
   final String hintText;
   final TextEditingController? controller;
   final OnValidator validator;
@@ -21,6 +19,7 @@ class CustomTextField extends StatefulWidget {
   final Function(String)? onChange;
   final Function(String)? onSubmitted;
   final TextInputAction? textInputAction;
+  final TextInputType? keyboardType;
 
   const CustomTextField({
     super.key,
@@ -32,9 +31,9 @@ class CustomTextField extends StatefulWidget {
     this.validator,
     this.hasSuffix = false,
     this.obscureText = false,
-    this.isNumber = false,
     this.prefixTxt = '',
     this.onChange,
+    this.keyboardType
   });
 
   @override
@@ -52,11 +51,17 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final transparentBorder =
+    buildOutlineInputBorder(ColorApp.transparent);
+
+    final errorBorder =
+    buildOutlineInputBorder(ColorApp.primary);
+
     return TextFormField(
       onFieldSubmitted: widget.onSubmitted,
       textInputAction: widget.textInputAction,
       onChanged: widget.onChange,
-      keyboardType: widget.isNumber ? TextInputType.numberWithOptions() : null,
+      keyboardType: widget.keyboardType,
       style: TextApp.regular16White,
       cursorColor: ColorApp.whiteColor,
       controller: widget.controller,
@@ -67,10 +72,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
         hoverColor: ColorApp.whiteColor,
         filled: true,
         fillColor: ColorApp.grayColor,
-        enabledBorder: buildOutlineInputBorder(ColorApp.transparent),
-        errorBorder: buildOutlineInputBorder(ColorApp.primary),
-        focusedBorder: buildOutlineInputBorder(ColorApp.transparent),
-        focusedErrorBorder: buildOutlineInputBorder(ColorApp.primary),
+        enabledBorder: transparentBorder,
+        errorBorder: errorBorder,
+        focusedBorder: transparentBorder,
+        focusedErrorBorder: errorBorder,
         hintText: widget.hintText,
         hintStyle: TextApp.regular16White,
         prefixIcon: Container(
@@ -89,15 +94,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     isObscured = !isObscured;
                   });
                 },
-                child: isObscured
-                    ? Padding(
-                  padding: EdgeInsets.all(8.sp),
-                  child: SvgPicture.asset(PathImage.unVisible),
-                )
-                    : Padding(
-                  padding: EdgeInsets.all(8.sp),
-                  child: SvgPicture.asset(PathImage.visible),
-                )
+            child: Padding(
+              padding: EdgeInsets.all(8.sp),
+              child: SvgPicture.asset(
+                isObscured
+                    ? PathImage.unVisible
+                    : PathImage.visible,
+              ),
+            )
               )
             : null,
       ),
