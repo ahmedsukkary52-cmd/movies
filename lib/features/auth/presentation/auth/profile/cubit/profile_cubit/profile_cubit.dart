@@ -43,7 +43,27 @@ class ProfileCubit extends Cubit<ProfileStates> {
   }
 
   Future<void> getProfile(UserEntity user, {bool forceRefresh = false}) async {
-    if (state is ProfileSuccess && !forceRefresh) return;
+    if (state is ProfileSuccess && !forceRefresh) {
+      final current = state as ProfileSuccess;
+      final userChanged = current.user.name != user.name ||
+          current.user.phone != user.phone ||
+          current.user.photoUrl != user.photoUrl;
+
+      if (!userChanged) return;
+
+      _currentUser = user;
+      emit(ProfileSuccess(
+        user: user,
+        watchlist: current.watchlist,
+        history: current.history,
+        watchlistCount: current.watchlistCount,
+        historyCount: current.historyCount,
+        phone: user.phone,
+        isLoadingLists: false,
+      ));
+      return;
+    }
+
     _currentUser = user;
 
     emit(ProfileSuccess(

@@ -24,11 +24,15 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final TextEditingController name = TextEditingController();
-  final TextEditingController email = TextEditingController();
-  final TextEditingController password = TextEditingController();
-  final TextEditingController confirmPassword = TextEditingController();
-  final TextEditingController phone = TextEditingController();
+  final TextEditingController name = TextEditingController(text: 'Amira Adel');
+  final TextEditingController email = TextEditingController(
+      text: 'amiraadel2009@gmail.com');
+  final TextEditingController password = TextEditingController(
+      text: 'Amira@2009');
+  final TextEditingController confirmPassword = TextEditingController(
+      text: 'Amira@2009');
+  final TextEditingController phone = TextEditingController(
+      text: '01080875641');
   final AuthCubit cubit = getIt<AuthCubit>();
   final _formKey = GlobalKey<FormState>();
   int _selectedAvatarIndex = 0;
@@ -91,7 +95,6 @@ class _RegisterPageState extends State<RegisterPage> {
           child: BlocBuilder<AuthCubit, AuthStates>(
             bloc: cubit,
             builder: (context, state) {
-              final pass = password.text;
               return SingleChildScrollView(
                 keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior
                     .onDrag,
@@ -153,7 +156,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               validator: (val) =>
                                   ValidatorsApp.validateConfirmPassword(
                                     val,
-                                    pass,
+                                    password.text,
                                   ),
                               obscureText: true,
                               prefixIconName: SvgPicture.asset(
